@@ -1,0 +1,6 @@
+---
+
+- hosts: "tag_OS_{{ deploy_env }}_coreos"
+  gather_facts: False
+  roles:
+    - defunctzombie.coreos-bootstrap

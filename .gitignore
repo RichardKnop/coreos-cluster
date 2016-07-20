@@ -1,0 +1,9 @@
+.DS_Store
+ssh.config
+.terraform
+*.tfstate
+*.backup
+.venv
+ansible-ec2.cache
+ansible-ec2.index
+crash.log

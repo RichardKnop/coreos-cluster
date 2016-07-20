@@ -1,0 +1,23 @@
+---
+
+- hosts: "{{ hosts_prefix }}_node_0"
+  gather_facts: False
+
+  roles:
+    - defunctzombie.coreos-bootstrap
+
+  tasks:
+    - include_vars: "environments/{{ deploy_env }}.yml"
+
+    - name: Render API configuration JSON file
+      template:
+        src: "templates/example.json.j2"
+        dest: "/tmp/example.json"
+
+    - name: Load example configuration into ETCD
+      raw: "etcdctl set /config/example.json < /tmp/example.json"
+
+    - name: Remove the example configuration JSON file
+      file:
+        path: "/tmp/example.json"
+        state: "absent"
