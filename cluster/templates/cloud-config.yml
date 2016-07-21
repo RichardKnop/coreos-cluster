@@ -2,11 +2,13 @@
 
 coreos:
   etcd2:
-    discovery: ${etcd_discovery_url}
-    advertise-client-urls: http://$private_ipv4:2379
-    initial-advertise-peer-urls: http://$private_ipv4:2380
-    listen-client-urls: http://0.0.0.0:2379
-    listen-peer-urls: http://$private_ipv4:2380
+    name: ${env}-etcd${count_index}
+    discovery-srv: ${dns_zone_name}
+    initial-cluster-token: ${etcd_initial_cluster_token}
+    advertise-client-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2379
+    initial-advertise-peer-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2380
+    listen-client-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2379
+    listen-peer-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2380
 
   units:
     - name: etcd2.service

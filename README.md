@@ -12,7 +12,6 @@ An example of how to provision a CoreOS cluster on AWS using Terraform and Ansib
 * [Requirements](#requirements)
   * [Ansible](#ansible)
   * [AWS Provisioning](#aws-provisioning)
-    * [Hosted DNS Zone](#hosted-dns-zone)
     * [Environment Variables](#environment-variables)
     * [SSL Certificate](#ssl-certificate)
 * [Provisioning](#provisioning)
@@ -42,10 +41,6 @@ Some resources created by Terraform are provisioned using Ansible. Read the `ans
 Main reason why we need Ansible is to secure secret information (such as database password) by `ansible-vault`.
 
 ## Requirements For AWS Provisioning
-
-### Hosted DNS Zone
-
-You will need to create a hosted DNS zone on AWS manually and store its ID in `variables.tf`.
 
 ### Environment Variables
 
@@ -143,18 +138,6 @@ Or:
 
 ```
 export TF_VAR_env=prod
-```
-
-Setup ETCD discovery URL:
-
-```
-export TF_VAR_etcd_discovery_url=$(./get-etcd-discovery-url-from-state-file.sh $TF_VAR_env)
-```
-
-Or if you are deploying for the first time, generate a new ETCD discovery URL:
-
-```
-export TF_VAR_etcd_discovery_url=`curl https://discovery.etcd.io/new?size=1`
 ```
 
 Export DNS variables:

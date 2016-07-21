@@ -1,8 +1,12 @@
 resource "template_file" "cloud_config" {
+  count = "${var.cluster_size}"
   template = "${file("${path.module}/templates/cloud-config.yml")}"
 
   vars {
-    etcd_discovery_url = "${var.discovery_url}"
+    env = "${var.env}"
+    dns_zone_name = "${var.dns_zone_name}"
+    count_index = "${count.index}"
+    etcd_initial_cluster_token = "${var.env}-etcd-cluster"
   }
 }
 
@@ -31,5 +35,9 @@ resource "aws_instance" "node" {
     Name = "${var.env}-node-${count.index}"
   }
 
-  user_data = "${template_file.cloud_config.rendered}"
+  user_data = "${element(template_file.cloud_config.*.rendered, count.index)}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

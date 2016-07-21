@@ -2,6 +2,10 @@ output "vpc_id" {
   value = "${aws_vpc.default.id}"
 }
 
+output "private_dns_zone_id" {
+  value = "${aws_route53_zone.private.id}"
+}
+
 output "private_subnets" {
   value = "${join(",", aws_subnet.private.*.id)}"
 }

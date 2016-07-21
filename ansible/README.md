@@ -148,10 +148,10 @@ ansible-vault edit environments/<env-name-prefix>.yml
 Required contents for `environments/<env-name-prefix>.yml` (if you don't know the password):
 
 ```yml
-aws_region: "aws_region"
 dns_zone_id: "dns_zone_id"
 dns_zone_name: "dns_zone_name"
 ssl_certificate_id: "ssl_certificate_id"
+aws_region: "aws_region"
 database_type: "postgres"
 database_host: "{{ deploy_env }}-rds.{{ dns_zone_name }}"
 database_port: 5432

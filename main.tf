@@ -20,7 +20,7 @@ module "rds" {
   db_name = "${var.db_name}"
   db_user = "${var.db_user}"
   db_password = "${var.db_password}"
-  dns_zone_id = "${var.dns_zone_id}"
+  dns_zone_id = "${module.vpc.private_dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
 }
 
@@ -36,6 +36,6 @@ module "cluster" {
   discovery_url = "${var.etcd_discovery_url}"
   default_security_group = "${module.vpc.default_security_group}"
   rds_user_security_group = "${module.rds.user_security_group}"
-  dns_zone_id = "${var.dns_zone_id}"
+  dns_zone_id = "${module.vpc.private_dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
 }
