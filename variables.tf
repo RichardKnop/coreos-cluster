@@ -85,11 +85,6 @@ variable "rds_skip_final_snapshot" {
   default     = false
 }
 
-variable "etcd_discovery_url" {
-  type        = "string"
-  description = "ETCD discovery URL"
-}
-
 variable "cluster_size" {
   type        = "map"
   description = "Cluster size (number of nodes)"

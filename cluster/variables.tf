@@ -28,11 +28,6 @@ variable "coreos_ami" {
   description = "CoreOS AMI for ETCD instances"
 }
 
-variable "discovery_url" {
-  type        = "string"
-  description = "ETCD discovery URL"
-}
-
 variable "default_security_group" {
   type        = "string"
   description = "Default security group"

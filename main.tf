@@ -33,7 +33,6 @@ module "cluster" {
   node_instance_type = "${lookup(var.node_instance_type, var.env)}"
   private_subnets = "${split(",", module.vpc.private_subnets)}"
   coreos_ami = "${lookup(var.coreos_amis, var.region)}"
-  discovery_url = "${var.etcd_discovery_url}"
   default_security_group = "${module.vpc.default_security_group}"
   rds_user_security_group = "${module.rds.user_security_group}"
   dns_zone_id = "${module.vpc.private_dns_zone_id}"
