@@ -28,7 +28,7 @@ resource "aws_instance" "node" {
 
   tags = {
     OS = "${var.env}-coreos"
-    Name = "${var.env}-etcd-${count.index}"
+    Name = "${var.env}-node-${count.index}"
   }
 
   user_data = "${template_file.cloud_config.rendered}"
