@@ -25,11 +25,6 @@ resource "aws_security_group" "etcd_elb" {
   tags = {
     Name = "${var.env}-etcd-elb-sg"
   }
-
-  depends_on = ["aws_security_group.etcd_user"]
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 
@@ -49,11 +44,6 @@ resource "aws_security_group" "etcd_node" {
 
   tags = {
     Name = "${var.env}-etcd-node-sg"
-  }
-
-  depends_on = ["aws_security_group.etcd_elb"]
-  lifecycle {
-    create_before_destroy = true
   }
 }
 
@@ -82,10 +72,5 @@ resource "aws_security_group" "etcd_cluster" {
 
   tags = {
     Name = "${var.env}-etcd-cluster-sg"
-  }
-
-  depends_on = ["aws_security_group.etcd_node"]
-  lifecycle {
-    create_before_destroy = true
   }
 }

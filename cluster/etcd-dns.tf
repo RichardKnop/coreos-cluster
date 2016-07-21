@@ -25,8 +25,6 @@ resource "aws_route53_record" "etcd_srv_server" {
   type = "SRV"
   ttl = "60"
   records = ["${formatlist("0 0 2380 %s", aws_route53_record.etcd_node_alias.*.name)}"]
-
-  depends_on = ["aws_route53_record.etcd_node_alias"]
 }
 
 resource "aws_route53_record" "etcd_srv_client" {
@@ -35,6 +33,4 @@ resource "aws_route53_record" "etcd_srv_client" {
   type = "SRV"
   ttl = "60"
   records = ["${formatlist("0 0 2379 %s", aws_route53_record.etcd_node_alias.*.name)}"]
-
-  depends_on = ["aws_route53_record.etcd_node_alias"]
 }

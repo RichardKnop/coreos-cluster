@@ -4,7 +4,6 @@ resource "aws_subnet" "private" {
   cidr_block = "${lookup(var.private_cidrs, concat("zone", count.index))}"
   availability_zone = "${lookup(var.availability_zones, concat("zone", count.index))}"
   map_public_ip_on_launch = false
-  depends_on = ["aws_instance.nat"]
   tags {
     Name = "${var.env}-private-subnet-${count.index}"
   }

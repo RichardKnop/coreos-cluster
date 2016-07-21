@@ -36,8 +36,4 @@ resource "aws_instance" "node" {
   }
 
   user_data = "${element(template_file.cloud_config.*.rendered, count.index)}"
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }

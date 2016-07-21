@@ -8,10 +8,11 @@ resource "aws_subnet" "public" {
   cidr_block = "${lookup(var.public_cidrs, concat("zone", count.index))}"
   availability_zone = "${lookup(var.availability_zones, concat("zone", count.index))}"
   map_public_ip_on_launch = true
-  depends_on = ["aws_internet_gateway.default"]
   tags {
     Name = "${var.env}-public-subnet-${count.index}"
   }
+
+  depends_on = ["aws_internet_gateway.default"]
 }
 
 resource "aws_route_table" "public" {
