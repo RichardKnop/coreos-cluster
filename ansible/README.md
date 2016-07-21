@@ -150,10 +150,10 @@ Required contents for `environments/<env-name-prefix>.yml` (if you don't know th
 ```yml
 aws_region: "aws_region"
 dns_zone_id: "dns_zone_id"
-domain_name: "domain_name"
+dns_zone_name: "dns_zone_name"
 ssl_certificate_id: "ssl_certificate_id"
 database_type: "postgres"
-database_host: "{{ deploy_env }}-rds.{{ domain_name }}"
+database_host: "{{ deploy_env }}-rds.{{ dns_zone_name }}"
 database_port: 5432
 database_user: "database_user"
 database_password: "database_password"
