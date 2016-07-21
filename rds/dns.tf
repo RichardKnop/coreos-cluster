@@ -3,5 +3,5 @@ resource "aws_route53_record" "rds" {
    name = "${var.env}-rds.${var.dns_zone_name}"
    type = "CNAME"
    ttl = "60"
-   records = ["${aws_db_instance.database.address}"]
+   records = ["${aws_db_instance.main.address}"]
 }

@@ -1,5 +1,5 @@
-resource "aws_db_instance" "database" {
-  identifier = "${var.env}-database"
+resource "aws_db_instance" "main" {
+  identifier = "${var.env}-main-database"
   name = "${var.db_name}"
   allocated_storage = "${var.rds_allocated_storage}"
   storage_type = "gp2"
@@ -15,14 +15,14 @@ resource "aws_db_instance" "database" {
     "${aws_security_group.rds.id}",
   ]
 
-  db_subnet_group_name = "${var.env}-database-subnet-group"
+  db_subnet_group_name = "${var.env}-main-db-subnet-group"
   publicly_accessible = false
   backup_retention_period = 7
-  depends_on = ["aws_db_subnet_group.default"]
+  depends_on = ["aws_db_subnet_group.main"]
 }
 
-resource "aws_db_subnet_group" "default" {
-  name = "${var.env}-database-subnet-group"
-  description = "Our main group of subnets"
+resource "aws_db_subnet_group" "main" {
+  name = "${var.env}-main-db-subnet-group"
+  description = "Subnets for the main database"
   subnet_ids = ["${var.private_subnets}"]
 }
