@@ -47,6 +47,7 @@ variable "rds_instance_type" {
   description = "RDS instance type"
 
   default = {
+    test  = "db.t2.micro"
     stage = "db.t2.micro"
     prod  = "db.t2.micro"
   }
@@ -57,6 +58,7 @@ variable "rds_allocated_storage" {
   description = "RDS allocated storage"
 
   default = {
+    test  = 10
     stage = 10
     prod  = 30
   }
@@ -93,6 +95,7 @@ variable "cluster_size" {
   description = "Cluster size (number of nodes)"
 
   default = {
+    test  = 2
     stage = 2
     prod  = 4
   }
@@ -103,6 +106,7 @@ variable "node_instance_type" {
   description = "EC2 instance type to use for nodes"
 
   default = {
+    test  = "t2.micro"
     stage = "t2.micro"
     prod  = "t2.micro"
   }
