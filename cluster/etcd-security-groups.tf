@@ -23,6 +23,15 @@ resource "aws_security_group" "etcd_elb" {
     ]
   }
 
+  egress {
+    from_port   = 2379
+    to_port     = 2379
+    protocol    = "tcp"
+    security_groups = [
+      "${var.default_security_group}",
+    ]
+  }
+
   tags = {
     Name = "${var.env}-etcd-elb-sg"
   }
