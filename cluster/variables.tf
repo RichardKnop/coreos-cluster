@@ -3,6 +3,11 @@ variable "env" {
   description = "Environment name"
 }
 
+variable "region" {
+  type        = "string"
+  description = "AWS region"
+}
+
 variable "vpc_id" {
   type        = "string"
   description = "VPC ID"
@@ -13,9 +18,9 @@ variable "cluster_size" {
   description = "Cluster size (number of nodes)"
 }
 
-variable "node_instance_type" {
+variable "cluster_instance_type" {
   type        = "string"
-  description = "EC2 instance type to use for nodes"
+  description = "EC2 instance type to use for cluster nodes"
 }
 
 variable "private_subnets" {
@@ -28,14 +33,14 @@ variable "coreos_ami" {
   description = "CoreOS AMI for ETCD instances"
 }
 
-variable "default_security_group" {
+variable "default_security_group_id" {
   type        = "string"
-  description = "Default security group"
+  description = "Default security group ID"
 }
 
-variable "rds_user_security_group" {
+variable "rds_user_security_group_id" {
   type        = "string"
-  description = "RDS user security group"
+  description = "RDS user security group ID"
 }
 
 variable "dns_zone_id" {
@@ -46,4 +51,9 @@ variable "dns_zone_id" {
 variable "dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
+}
+
+variable "force_destroy" {
+  type        = "string"
+  description = "Delete S3 buckets content"
 }

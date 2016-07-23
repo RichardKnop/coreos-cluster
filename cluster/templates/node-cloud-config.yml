@@ -1,6 +1,9 @@
 #cloud-config
 
 coreos:
+  update:
+    reboot-strategy: etcd-lock
+
   etcd2:
     name: ${env}-etcd${count_index}
     discovery-srv: ${dns_zone_name}
@@ -9,6 +12,10 @@ coreos:
     initial-advertise-peer-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2380
     listen-client-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2379
     listen-peer-urls: http://${env}-etcd${count_index}.${dns_zone_name}:2380
+
+  fleet:
+    etcd_servers: "http://${env}-etcd${count_index}.${dns_zone_name}:2379"
+    metadata: "region=${region}"
 
   units:
     - name: etcd2.service

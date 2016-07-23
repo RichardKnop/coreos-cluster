@@ -96,13 +96,19 @@ variable "cluster_size" {
   }
 }
 
-variable "node_instance_type" {
+variable "cluster_instance_type" {
   type        = "map"
-  description = "EC2 instance type to use for nodes"
+  description = "EC2 instance type to use for cluster nodes"
 
   default = {
     test  = "t2.micro"
     stage = "t2.micro"
     prod  = "t2.micro"
   }
+}
+
+variable "force_destroy" {
+  type        = "string"
+  description = "Delete S3 buckets content"
+  default     = false
 }

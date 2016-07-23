@@ -18,11 +18,11 @@ output "private_route_table" {
   value = "${aws_route_table.private.id}"
 }
 
-output "default_security_group" {
+output "default_security_group_id" {
   value = "${aws_security_group.default.id}"
 }
 
-output "web_security_group" {
+output "web_security_group_id" {
   value = "${aws_security_group.web.id}"
 }
 
