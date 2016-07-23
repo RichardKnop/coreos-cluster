@@ -13,6 +13,11 @@ variable "private_subnets" {
   description = "Private subnets"
 }
 
+variable "database_id" {
+  type        = "string"
+  description = "Unique name for the database"
+}
+
 variable "rds_instance_type" {
   type        = "string"
   description = "RDS instance type"

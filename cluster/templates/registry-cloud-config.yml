@@ -1,1 +1,25 @@
 #cloud-config
+
+coreos:
+  units:
+    - name: registry
+      command: start
+      content: |
+        [Unit]
+        Description=Docker private registry service
+        After=docker.service
+
+        [Service]
+        ExecStartPre=-/usr/bin/docker kill registry
+        ExecStartPre=-/usr/bin/docker rm registry
+        ExecStart=/usr/bin/docker run --name registry -p 5000:5000 \
+          -e REGISTRY_STORAGE=s3 \
+          -e REGISTRY_STORAGE_S3_REGION=${region} \
+          -e REGISTRY_STORAGE_S3_BUCKET=${storage_bucket} \
+          registry:2
+        ExecStop=-/usr/bin/docker stop registry
+        Restart=always
+        RestartSec=10s
+
+        [Install]
+        WantedBy=multi-user.target

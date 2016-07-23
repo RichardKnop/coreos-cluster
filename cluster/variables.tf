@@ -13,6 +13,11 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
+variable "cluster_id" {
+  type        = "string"
+  description = "Unique name for the cluster"
+}
+
 variable "cluster_size" {
   type        = "string"
   description = "Cluster size (number of nodes)"

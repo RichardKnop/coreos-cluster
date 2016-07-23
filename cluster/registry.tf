@@ -1,5 +1,10 @@
 resource "template_file" "registry_cloud_config" {
   template = "${file("${path.module}/templates/registry-cloud-config.yml")}"
+
+  vars {
+    region = "${var.region}"
+    storage_bucket = "${aws_s3_bucket.registry_storage.bucket}"
+  }
 }
 
 resource "aws_instance" "registry" {
@@ -21,8 +26,8 @@ resource "aws_instance" "registry" {
   key_name = "${var.env}-deployer"
 
   tags = {
-    OS = "${var.env}-coreos"
-    Name = "${var.env}-registry"
+    OS = "coreos"
+    Name = "${var.env}-${var.cluster_id}-registry"
   }
 
   user_data = "${template_file.registry_cloud_config.rendered}"
