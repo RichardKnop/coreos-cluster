@@ -1,6 +1,6 @@
 resource "aws_route53_record" "registry_elb_alias" {
   zone_id = "${var.dns_zone_id}"
-  name = "${var.env}-${var.cluster_id}.registry.${var.dns_zone_name}"
+  name = "${var.cluster_id}.${var.env}.registry.${var.dns_zone_name}"
   type = "A"
 
   alias {

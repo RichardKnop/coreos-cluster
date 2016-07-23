@@ -8,7 +8,6 @@ resource "template_file" "node_cloud_config" {
     cluster_id = "${var.cluster_id}"
     dns_zone_name = "${var.dns_zone_name}"
     count_index = "${count.index}"
-    etcd_initial_cluster_token = "${var.env}-etcd-cluster"
   }
 }
 

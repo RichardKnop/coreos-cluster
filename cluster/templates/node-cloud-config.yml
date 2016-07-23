@@ -6,15 +6,15 @@ coreos:
 
   etcd2:
     name: etcd${count_index}
-    discovery-srv: ${var.cluster_id}.${env}.${dns_zone_name}
-    initial-cluster-token: ${etcd_initial_cluster_token}
-    advertise-client-urls: http://etcd${count_index}.${var.cluster_id}.${env}.${dns_zone_name}:2379
-    initial-advertise-peer-urls: http://etcd${count_index}.${var.cluster_id}.${env}.${dns_zone_name}:2380
-    listen-client-urls: http://etcd${count_index}.${var.cluster_id}.${env}.${dns_zone_name}:2379
-    listen-peer-urls: http://etcd${count_index}.${var.cluster_id}.${env}.${dns_zone_name}:2380
+    discovery-srv: ${cluster_id}.${env}.${dns_zone_name}
+    initial-cluster-token: ${env}-${cluster_id}
+    advertise-client-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379
+    initial-advertise-peer-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2380
+    listen-client-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379
+    listen-peer-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2380
 
   fleet:
-    etcd_servers: "http://etcd${count_index}.${var.cluster_id}.${env}.${dns_zone_name}:2379"
+    etcd_servers: "http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379"
     metadata: "region=${region}"
 
   units:
