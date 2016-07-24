@@ -13,7 +13,7 @@
         "s3:GetBucketLocation",
         "s3:ListBucketMultipartUploads"
       ],
-      "Resource": "arn:aws:s3:::${env}-${cluster_id}-registry.${dns_zone_name}"
+      "Resource": "arn:aws:s3:::registry.${env}.${dns_zone_name}"
     },
     {
       "Effect": "Allow",
@@ -29,7 +29,7 @@
         "s3:ListMultipartUploadParts",
         "s3:AbortMultipartUpload"
       ],
-      "Resource": "arn:aws:s3:::${env}-${cluster_id}-registry.${dns_zone_name}/*"
+      "Resource": "arn:aws:s3:::registry.${env}.${dns_zone_name}/*"
     }
   ]
 }

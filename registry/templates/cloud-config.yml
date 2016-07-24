@@ -1,0 +1,47 @@
+#cloud-config
+
+write_files:
+  - path: /etc/hosts
+    content: |
+      127.0.0.1   localhost
+      127.0.0.1   ${host}
+  - path: /home/core/certs/${host}.key
+    encoding: base64
+    content: |
+      ${private_key}
+  - path: /home/core/certs/${host}.crt
+    encoding: base64
+    content: |
+      ${certificate}
+
+coreos:
+  units:
+    - name: registry.service
+      command: start
+      content: |
+        [Unit]
+        Description=Docker private registry service
+        After=docker.service
+
+        [Service]
+        ExecStartPre=-/usr/bin/docker kill %n
+        ExecStartPre=-/usr/bin/docker rm %n
+        ExecStart=/usr/bin/docker run --name %n -p ${port}:5000 \
+          -v /home/core/certs:/certs \
+          -e REGISTRY_STORAGE=s3 \
+          -e REGISTRY_STORAGE_S3_REGION=${region} \
+          -e REGISTRY_STORAGE_S3_BUCKET=${storage_bucket} \
+          -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/${host}.crt \
+          -e REGISTRY_HTTP_TLS_KEY=/certs/${host}.key \
+          registry:2
+        Restart=always
+        RestartSec=10s
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      drop-ins:
+        - name: 50-insecure-registry.conf
+          content: |
+            [Service]
+            Environment=DOCKER_OPTS='--insecure-registry="${host}:${port}"'

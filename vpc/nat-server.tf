@@ -1,6 +1,6 @@
 resource "aws_instance" "nat" {
   ami = "${var.nat_ami}"
-  instance_type = "t2.micro"
+  instance_type = "${var.nat_instance_type}"
   subnet_id = "${aws_subnet.public.0.id}"
   source_dest_check = false
 

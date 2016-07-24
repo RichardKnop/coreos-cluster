@@ -42,6 +42,28 @@ variable "ssl_certificate_id" {
   description = "The id of an SSL certificate uploaded to AWS IAM"
 }
 
+variable "nat_instance_type" {
+  type        = "map"
+  description = "EC2 instance type to use for NAT server"
+
+  default = {
+    test  = "t2.micro"
+    stage = "t2.micro"
+    prod  = "t2.micro"
+  }
+}
+
+variable "registry_instance_type" {
+  type        = "map"
+  description = "Docker registry instance type"
+
+  default = {
+    test  = "t2.micro"
+    stage = "t2.micro"
+    prod  = "t2.micro"
+  }
+}
+
 variable "rds_instance_type" {
   type        = "map"
   description = "RDS instance type"
@@ -111,4 +133,10 @@ variable "force_destroy" {
   type        = "string"
   description = "Delete S3 buckets content"
   default     = false
+}
+
+variable "registry_port" {
+  type        = "string"
+  description = "Docker registry port"
+  default     = "443"
 }

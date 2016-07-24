@@ -1,16 +1,15 @@
 resource "template_file" "registry_storage_bucket_policy" {
-  template = "${file("${path.module}/templates/registry-storage-bucket-policy.json")}"
+  template = "${file("${path.module}/templates/storage-bucket-policy.json")}"
 
   vars {
     env = "${var.env}"
-    cluster_id = "${var.cluster_id}"
     dns_zone_name = "${var.dns_zone_name}"
     registry_iam_role_arn = "${aws_iam_role.registry.arn}"
   }
 }
 
 resource "aws_s3_bucket" "registry_storage" {
-  bucket = "${var.env}-${var.cluster_id}-registry.${var.dns_zone_name}"
+  bucket = "registry.${var.env}.${var.dns_zone_name}"
   acl = "private"
   force_destroy = "${var.force_destroy}"
   policy = "${template_file.registry_storage_bucket_policy.rendered}"

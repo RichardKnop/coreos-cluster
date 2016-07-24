@@ -3,6 +3,7 @@ module "vpc" {
 
   env = "${var.env}"
   region = "${var.region}"
+  nat_instance_type = "${lookup(var.nat_instance_type, var.env)}"
   nat_ami = "${lookup(var.nat_amis, var.region)}"
   dns_zone_id = "${var.dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
@@ -34,6 +35,22 @@ module "rds" {
   dns_zone_name = "${var.dns_zone_name}"
 }
 
+module "registry" {
+  source = "./registry"
+
+  env = "${var.env}"
+  region = "${var.region}"
+  vpc_id = "${module.vpc.vpc_id}"
+  registry_instance_type = "${lookup(var.registry_instance_type, var.env)}"
+  private_subnets = "${split(",", module.vpc.private_subnets)}"
+  coreos_ami = "${lookup(var.coreos_amis, var.region)}"
+  default_security_group_id = "${module.vpc.default_security_group_id}"
+  dns_zone_id = "${module.vpc.private_dns_zone_id}"
+  dns_zone_name = "${var.dns_zone_name}"
+  force_destroy = "${var.force_destroy}"
+  port = "${var.registry_port}"
+}
+
 module "cluster" {
   source = "./cluster"
 
@@ -46,7 +63,10 @@ module "cluster" {
   private_subnets = "${split(",", module.vpc.private_subnets)}"
   coreos_ami = "${lookup(var.coreos_amis, var.region)}"
   default_security_group_id = "${module.vpc.default_security_group_id}"
+  registry_user_security_group_id = "${module.registry.user_security_group_id}"
   rds_user_security_group_id = "${module.rds.user_security_group_id}"
+  registry_host = "${module.registry.host}"
+  registry_port = "${var.registry_port}"
   dns_zone_id = "${module.vpc.private_dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
   force_destroy = "${var.force_destroy}"

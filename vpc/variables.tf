@@ -8,6 +8,11 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "nat_instance_type" {
+  type        = "string"
+  description = "EC2 instance type to use for NAT server"
+}
+
 variable "nat_ami" {
   type        = "string"
   description = "AMI for NAT server"

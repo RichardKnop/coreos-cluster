@@ -1,6 +1,6 @@
-resource "template_file" "node_cloud_config" {
+resource "template_file" "cloud_config" {
   count = "${var.cluster_size}"
-  template = "${file("${path.module}/templates/node-cloud-config.yml")}"
+  template = "${file("${path.module}/templates/cloud-config.yml")}"
 
   vars {
     env = "${var.env}"
@@ -8,6 +8,8 @@ resource "template_file" "node_cloud_config" {
     cluster_id = "${var.cluster_id}"
     dns_zone_name = "${var.dns_zone_name}"
     count_index = "${count.index}"
+    registry_host = "${var.registry_host}"
+    registry_port = "${var.registry_port}"
   }
 }
 
@@ -26,6 +28,7 @@ resource "aws_instance" "node" {
     "${var.default_security_group_id}",
     "${aws_security_group.node.id}",
     "${aws_security_group.etcd.id}",
+    "${var.registry_user_security_group_id}",
     "${var.rds_user_security_group_id}",
   ]
 
@@ -36,5 +39,5 @@ resource "aws_instance" "node" {
     Name = "${var.env}-${var.cluster_id}-node-${count.index}"
   }
 
-  user_data = "${element(template_file.node_cloud_config.*.rendered, count.index)}"
+  user_data = "${element(template_file.cloud_config.*.rendered, count.index)}"
 }

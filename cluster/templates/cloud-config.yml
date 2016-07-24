@@ -22,3 +22,9 @@ coreos:
       command: start
     - name: fleet.service
       command: start
+    - name: docker.service
+      drop-ins:
+        - name: 50-insecure-registry.conf
+          content: |
+            [Service]
+            Environment=DOCKER_OPTS='--insecure-registry="${registry_host}:${registry_port}"'
