@@ -2,8 +2,9 @@ resource "template_file" "cloud_config" {
   template = "${file("${path.module}/templates/cloud-config.yml")}"
 
   vars {
-    private_key = "${base64encode(tls_private_key.registry.private_key_pem)}"
-    certificate = "${base64encode(tls_self_signed_cert.registry.cert_pem)}"
+    ca_cert = "${base64encode(var.ca_cert_pem)}"
+    registry_key = "${base64encode(tls_private_key.registry.private_key_pem)}"
+    registry_cert = "${base64encode(tls_locally_signed_cert.registry.cert_pem)}"
     region = "${var.region}"
     storage_bucket = "${aws_s3_bucket.registry_storage.bucket}"
     host = "registry.${var.env}.${var.dns_zone_name}"

@@ -1,3 +1,7 @@
+module "ca" {
+  source = "./ca"
+}
+
 module "vpc" {
   source = "./vpc"
 
@@ -47,6 +51,9 @@ module "registry" {
   default_security_group_id = "${module.vpc.default_security_group_id}"
   dns_zone_id = "${module.vpc.private_dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
+  ca_key_algorithm = "${module.ca.ca_key_algorithm}"
+  ca_private_key_pem = "${module.ca.ca_private_key_pem}"
+  ca_cert_pem = "${module.ca.ca_cert_pem}"
   force_destroy = "${var.force_destroy}"
   port = "${var.registry_port}"
 }
@@ -69,5 +76,8 @@ module "cluster" {
   registry_port = "${var.registry_port}"
   dns_zone_id = "${module.vpc.private_dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
+  ca_key_algorithm = "${module.ca.ca_key_algorithm}"
+  ca_private_key_pem = "${module.ca.ca_private_key_pem}"
+  ca_cert_pem = "${module.ca.ca_cert_pem}"
   force_destroy = "${var.force_destroy}"
 }

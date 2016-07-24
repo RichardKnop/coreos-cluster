@@ -8,3 +8,4 @@ ansible-ec2.cache
 ansible-ec2.index
 crash.log
 .bash_profile
+.cfssl

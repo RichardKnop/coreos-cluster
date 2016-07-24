@@ -45,7 +45,7 @@ Test that the dynamic inventory file is working:
 Render an SSH configuration file, i.e.:
 
 ```
-./render-ssh-config.sh <env-name-prefix> <domain-name>
+./scripts/render-ssh-config.sh <env-name-prefix> <domain-name>
 ```
 
 ## Setting Up GPG-encrypted Vault Support

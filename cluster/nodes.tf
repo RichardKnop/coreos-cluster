@@ -3,13 +3,12 @@ resource "template_file" "cloud_config" {
   template = "${file("${path.module}/templates/cloud-config.yml")}"
 
   vars {
+    ca_cert = "${base64encode(var.ca_cert_pem)}"
     env = "${var.env}"
     region = "${var.region}"
     cluster_id = "${var.cluster_id}"
     dns_zone_name = "${var.dns_zone_name}"
     count_index = "${count.index}"
-    registry_host = "${var.registry_host}"
-    registry_port = "${var.registry_port}"
   }
 }
 

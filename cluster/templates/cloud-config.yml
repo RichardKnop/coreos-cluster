@@ -1,5 +1,11 @@
 #cloud-config
 
+write_files:
+  - path: /etc/ssl/certs/ca-cert.pem
+    encoding: base64
+    content: |
+      ${ca_cert}
+
 coreos:
   update:
     reboot-strategy: etcd-lock
@@ -18,13 +24,17 @@ coreos:
     metadata: "region=${region}"
 
   units:
+    - name: update-ca-certificates.service
+      command: start
+      content: |
+        [Unit]
+        Description=Updateds CA certificates
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/sbin/update-ca-certificates
+        [Install]
+        WantedBy=multi-user.target
     - name: etcd2.service
       command: start
     - name: fleet.service
       command: start
-    - name: docker.service
-      drop-ins:
-        - name: 50-insecure-registry.conf
-          content: |
-            [Service]
-            Environment=DOCKER_OPTS='--insecure-registry="${registry_host}:${registry_port}"'

@@ -73,6 +73,21 @@ variable "dns_zone_name" {
   description = "Amazon Route53 DNS zone name"
 }
 
+variable "ca_key_algorithm" {
+  type        = "string"
+  description = "CA private key algorithm"
+}
+
+variable "ca_private_key_pem" {
+  type        = "string"
+  description = "CA private key in PEM format"
+}
+
+variable "ca_cert_pem" {
+  type        = "string"
+  description = "CA certificate in PEM format"
+}
+
 variable "force_destroy" {
   type        = "string"
   description = "Delete S3 buckets content"

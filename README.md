@@ -10,7 +10,6 @@ An example of how to provision a CoreOS cluster on AWS using Terraform and Ansib
 * [CoreOS Cluster](#coreos-cluster)
 * [Index](#index)
 * [Requirements](#requirements)
-  * [Ansible](#ansible)
   * [AWS Provisioning](#aws-provisioning)
     * [Environment Variables](#environment-variables)
     * [SSL Certificate](#ssl-certificate)
@@ -33,12 +32,6 @@ brew install terraform
 You need an SSH key. The private key needs to be chmod to 600.
 
 You need the cloud provider credentials. These will be entered on the command line.
-
-## Ansible
-
-Some resources created by Terraform are provisioned using Ansible. Read the `ansible/README.md` file for more details.
-
-Main reason why we need Ansible is to secure secret information (such as database password) by `ansible-vault`.
 
 ## Requirements For AWS Provisioning
 
@@ -113,7 +106,7 @@ Result:
 Render an SSH configuration file, i.e.:
 
 ```
-./render-ssh-config.sh <env-name-prefix> <domain-name>
+./scripts/render-ssh-config.sh <env-name-prefix> <domain-name>
 ```
 
 Create virtual Python environment for Ansible:
@@ -143,17 +136,17 @@ export TF_VAR_env=prod
 Export DNS variables:
 
 ```
-export TF_VAR_dns_zone_id=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env dns_zone_id)
-export TF_VAR_dns_zone_name=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env dns_zone_name)
-export TF_VAR_ssl_certificate_id=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
+export TF_VAR_dns_zone_id=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
+export TF_VAR_dns_zone_name=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
+export TF_VAR_ssl_certificate_id=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
 ```
 
 Export DB variables from the `ansible-vault`:
 
 ```
-export TF_VAR_db_name=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env database_name)
-export TF_VAR_db_user=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env database_user)
-export TF_VAR_db_password=$(cd ansible ; ./get-vault-variable.sh $TF_VAR_env database_password)
+export TF_VAR_db_name=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_name)
+export TF_VAR_db_user=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_user)
+export TF_VAR_db_password=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_password)
 ```
 
 For test environments, it's useful to disable final DB snapshot:
@@ -171,7 +164,7 @@ We need to support multiple environments (`stage`, `prod` etc) and share state f
 First, decrypt a state file you want to use:
 
 ```
-./decrypt-state-file.sh $TF_VAR_env
+./scripts/decrypt-state-file.sh $TF_VAR_env
 ```
 
 The above script would decrypt `$TF_VAR_env.tfstate.gpg` to `$TF_VAR_env.tfstate`.
@@ -179,7 +172,7 @@ The above script would decrypt `$TF_VAR_env.tfstate.gpg` to `$TF_VAR_env.tfstate
 After running Terraform, don't forget to update the encrypted state file:
 
 ```
-./encrypt-state-file.sh $TF_VAR_env
+./scripts/encrypt-state-file.sh $TF_VAR_env
 ```
 
 ## Apply Execution Plan

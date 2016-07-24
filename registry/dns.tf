@@ -1,4 +1,4 @@
-resource "aws_route53_record" "elb_alias" {
+resource "aws_route53_record" "registry_alias" {
   zone_id = "${var.dns_zone_id}"
   name = "registry.${var.env}.${var.dns_zone_name}"
   type = "A"

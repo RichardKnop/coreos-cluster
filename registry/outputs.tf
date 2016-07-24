@@ -3,5 +3,5 @@ output "user_security_group_id" {
 }
 
 output "host" {
-  value = "${aws_route53_record.elb_alias.fqdn}"
+  value = "${aws_route53_record.registry_alias.fqdn}"
 }
