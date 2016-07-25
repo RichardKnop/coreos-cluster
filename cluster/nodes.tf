@@ -27,8 +27,6 @@ resource "aws_instance" "node" {
     "${var.default_security_group_id}",
     "${aws_security_group.node.id}",
     "${aws_security_group.etcd.id}",
-    "${var.registry_user_security_group_id}",
-    "${var.rds_user_security_group_id}",
   ]
 
   key_name = "${var.env}-deployer"

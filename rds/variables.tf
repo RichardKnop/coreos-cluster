@@ -13,6 +13,11 @@ variable "private_subnets" {
   description = "Private subnets"
 }
 
+variable "user_security_group_ids" {
+  type        = "string"
+  description = "Security group IDs that will be able to connect to RDS"
+}
+
 variable "database_id" {
   type        = "string"
   description = "Unique name for the database"
@@ -37,6 +42,12 @@ variable "postgres_engine_version" {
   type        = "string"
   description = "Version of Postgres we want to provision"
   default     = "9.5.2"
+}
+
+variable "db_port" {
+  type        = "string"
+  description = "Database port"
+  default     = "5432"
 }
 
 variable "db_password" {

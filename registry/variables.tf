@@ -33,6 +33,17 @@ variable "default_security_group_id" {
   description = "Default security group ID"
 }
 
+variable "user_security_group_ids" {
+  type        = "string"
+  description = "Security group IDs that will be able to connect to the registry"
+}
+
+variable "registry_port" {
+  type        = "string"
+  description = "Registry port"
+  default     = "443"
+}
+
 variable "dns_zone_id" {
   type        = "string"
   description = "Amazon Route53 DNS zone identifier"
@@ -61,9 +72,4 @@ variable "ca_cert_pem" {
 variable "force_destroy" {
   type        = "string"
   description = "Delete S3 buckets content"
-}
-
-variable "port" {
-  type        = "string"
-  description = "Docker registry port"
 }

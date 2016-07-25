@@ -134,9 +134,3 @@ variable "force_destroy" {
   description = "Delete S3 buckets content"
   default     = false
 }
-
-variable "registry_port" {
-  type        = "string"
-  description = "Docker registry port"
-  default     = "443"
-}

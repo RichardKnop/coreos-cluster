@@ -1,6 +1,6 @@
 resource "tls_private_key" "ca" {
-  algorithm = "RSA"
-  rsa_bits = 2048
+  algorithm = "ECDSA"
+  ecdsa_curve = "P384"
 }
 
 resource "tls_self_signed_cert" "ca" {
@@ -8,8 +8,8 @@ resource "tls_self_signed_cert" "ca" {
   private_key_pem = "${tls_private_key.ca.private_key_pem}"
 
   subject {
-    common_name = "CA"
-    organization = "CA"
+    common_name = "Example CA"
+    organization = "Example, Ltd"
     country = "GB"
   }
 

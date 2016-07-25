@@ -8,7 +8,7 @@ resource "template_file" "cloud_config" {
     region = "${var.region}"
     storage_bucket = "${aws_s3_bucket.registry_storage.bucket}"
     host = "registry.${var.env}.${var.dns_zone_name}"
-    port = "${var.port}"
+    port = "${var.registry_port}"
   }
 }
 

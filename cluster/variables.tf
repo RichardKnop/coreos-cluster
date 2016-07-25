@@ -43,26 +43,6 @@ variable "default_security_group_id" {
   description = "Default security group ID"
 }
 
-variable "registry_user_security_group_id" {
-  type        = "string"
-  description = "Docker registry user security group ID"
-}
-
-variable "rds_user_security_group_id" {
-  type        = "string"
-  description = "RDS user security group ID"
-}
-
-variable "registry_host" {
-  type        = "string"
-  description = "DNS host of the private Docker registry"
-}
-
-variable "registry_port" {
-  type        = "string"
-  description = "Docker registry port"
-}
-
 variable "dns_zone_id" {
   type        = "string"
   description = "Amazon Route53 DNS zone identifier"
