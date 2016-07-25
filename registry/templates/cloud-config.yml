@@ -48,6 +48,7 @@ coreos:
         [Service]
         ExecStartPre=-/usr/bin/docker kill %n
         ExecStartPre=-/usr/bin/docker rm %n
+        ExecStartPre=/usr/bin/docker pull registry:2
         ExecStart=/usr/bin/docker run --name %n -p ${port}:5000 \
           -v /home/core/certs:/certs \
           -e REGISTRY_STORAGE=s3 \
@@ -56,6 +57,7 @@ coreos:
           -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.pem \
           -e REGISTRY_HTTP_TLS_KEY=/certs/registry-key.pem \
           registry:2
+        ExecStop=/usr/bin/docker stop %n
         Restart=always
         RestartSec=10s
 
