@@ -29,6 +29,7 @@ coreos:
       content: |
         [Unit]
         Description=Updateds CA certificates
+        Before=docker.service
         [Service]
         Type=oneshot
         ExecStart=/usr/sbin/update-ca-certificates
