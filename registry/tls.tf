@@ -1,6 +1,6 @@
 resource "tls_private_key" "registry" {
-  algorithm = "RSA"
-  rsa_bits = 2048
+  algorithm = "ECDSA"
+  ecdsa_curve = "P384"
 }
 
 resource "tls_cert_request" "registry" {
@@ -8,12 +8,12 @@ resource "tls_cert_request" "registry" {
   private_key_pem = "${tls_private_key.registry.private_key_pem}"
 
   subject {
-    common_name = "registry.${var.env}.${var.dns_zone_name}"
+    common_name = "registry.${var.private_dns_zone_name}"
     organization = "Example, Ltd"
     country = "GB"
   }
 
-  dns_names = ["registry.${var.env}.${var.dns_zone_name}"]
+  dns_names = ["registry.${var.private_dns_zone_name}"]
 }
 
 resource "tls_locally_signed_cert" "registry" {

@@ -8,9 +8,9 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
-variable "private_subnets" {
+variable "private_subnet_ids" {
   type        = "string"
-  description = "Private subnets"
+  description = "Private subnet IDs"
 }
 
 variable "user_security_group_ids" {
@@ -65,12 +65,12 @@ variable "db_user" {
   description = "Database username"
 }
 
-variable "dns_zone_id" {
+variable "private_dns_zone_id" {
   type        = "string"
   description = "Amazon Route53 DNS zone identifier"
 }
 
-variable "dns_zone_name" {
+variable "private_dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
 }

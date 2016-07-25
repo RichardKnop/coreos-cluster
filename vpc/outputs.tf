@@ -6,11 +6,15 @@ output "private_dns_zone_id" {
   value = "${aws_route53_zone.private.id}"
 }
 
-output "private_subnets" {
+output "private_subnet_ids" {
   value = "${join(",", aws_subnet.private.*.id)}"
 }
 
-output "public_subnets" {
+output "private_subnet_cidrs" {
+  value = "${join(",", aws_subnet.private.*.cidr_block)}"
+}
+
+output "public_subnet_ids" {
   value = "${join(",", aws_subnet.public.*.id)}"
 }
 

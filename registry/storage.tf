@@ -3,13 +3,13 @@ resource "template_file" "registry_storage_bucket_policy" {
 
   vars {
     env = "${var.env}"
-    dns_zone_name = "${var.dns_zone_name}"
+    dns_zone_name = "${var.private_dns_zone_name}"
     registry_iam_role_arn = "${aws_iam_role.registry.arn}"
   }
 }
 
 resource "aws_s3_bucket" "registry_storage" {
-  bucket = "registry.${var.env}.${var.dns_zone_name}"
+  bucket = "registry.${var.env}.${var.private_dns_zone_name}"
   acl = "private"
   force_destroy = "${var.force_destroy}"
   policy = "${template_file.registry_storage_bucket_policy.rendered}"

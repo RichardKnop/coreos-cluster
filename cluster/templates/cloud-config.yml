@@ -1,26 +1,74 @@
 #cloud-config
 
+hostname: "${hostname}"
+
 write_files:
-  - path: /etc/ssl/certs/ca-cert.pem
+  # let's add our own CA to trusted certificates
+  - path: /etc/ssl/certs/ca.pem
     encoding: base64
     content: |
       ${ca_cert}
+  # add coreos certificate
+  - path: /home/core/certs/coreos-key.pem
+    encoding: base64
+    content: |
+      ${coreos_key}
+  - path: /home/core/certs/coreos.pem
+    encoding: base64
+    content: |
+      ${coreos_cert}
+  # tell etcd2 and fleet where our certificates are:
+  - path: /run/systemd/system/etcd2.service.d/30-certificates.conf
+    permissions: 0644
+    content: |
+      [Service]
+      # client env vars
+      Environment=ETCD_CA_FILE=/etc/ssl/certs/ca.pem
+      Environment=ETCD_CERT_FILE=/home/core/certs/coreos.pem
+      Environment=ETCD_KEY_FILE=/home/core/certs/coreos.pem
+      # peer env vars
+      Environment=ETCD_PEER_CA_FILE=/etc/ssl/certs/ca.pem
+      Environment=ETCD_PEER_CERT_FILE=/home/core/certs/coreos.pem
+      Environment=ETCD_PEER_KEY_FILE=/home/core/certs/coreos-key.pem
+  - path: /run/systemd/system/fleet.service.d/30-certificates.conf
+    permissions: 0644
+    content: |
+      [Service]
+      # client auth certs
+      Environment=FLEET_ETCD_CAFILE=/etc/ssl/certs/ca.pem
+      Environment=FLEET_ETCD_CERTFILE=/home/core/certs/coreos.pem
+      Environment=FLEET_ETCD_KEYFILE=/home/core/certs/coreos-key.pem
+  # etcdctl, fleetctl
+  - path: /etc/profile.d/etcd-envvars.sh
+    permissions: 0644
+    content: |
+      # for etcdctl
+      export ETCDCTL_PEERS=https://127.0.0.1:2379
+      export ETCDCTL_CA_FILE=/etc/ssl/certs/ca.pem
+      export ETCDCTL_CERT_FILE=/home/core/certs/coreos.pem
+      export ETCDCTL_KEY_FILE=/home/core/certs/coreos-key.pem
+
+      # for fleetctl. Note: FLEETCTL_ENDPOINT only take one url
+      export FLEETCTL_ENDPOINT=$ETCDCTL_PEERS
+      export FLEETCTL_ETCD_CA_FILE=$ETCDCTL_CA_FILE
+      export FLEETCTL_ETCD_CERTFILE=$ETCDCTL_CERT_FILE
+      export FLEETCTL_ETCD_KEYFILE=$ETCDCTL_KEY_FILE
 
 coreos:
   update:
     reboot-strategy: etcd-lock
 
   etcd2:
-    name: etcd${count_index}
-    discovery-srv: ${cluster_id}.${env}.${dns_zone_name}
-    initial-cluster-token: ${env}-${cluster_id}
-    advertise-client-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379
-    initial-advertise-peer-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2380
-    listen-client-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379
-    listen-peer-urls: http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2380
+    name: ${hostname}
+    discovery-srv: ${cluster_id}.${dns_zone_name}
+    initial-cluster-token: ${cluster_id}
+    advertise-client-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
+    initial-advertise-peer-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2380
+    listen-client-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
+    listen-peer-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2380
 
   fleet:
-    etcd_servers: "http://etcd${count_index}.${cluster_id}.${env}.${dns_zone_name}:2379"
+    etcd_servers: "https://${hostname}.${cluster_id}.${dns_zone_name}:2379"
     metadata: "region=${region}"
 
   units:

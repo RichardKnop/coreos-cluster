@@ -18,9 +18,9 @@ variable "registry_instance_type" {
   description = "EC2 instance type to use for registry nodes"
 }
 
-variable "private_subnets" {
+variable "private_subnet_ids" {
   type        = "string"
-  description = "Private subnets"
+  description = "Private subnet IDs"
 }
 
 variable "coreos_ami" {
@@ -44,12 +44,12 @@ variable "registry_port" {
   default     = "443"
 }
 
-variable "dns_zone_id" {
+variable "private_dns_zone_id" {
   type        = "string"
   description = "Amazon Route53 DNS zone identifier"
 }
 
-variable "dns_zone_name" {
+variable "private_dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
 }

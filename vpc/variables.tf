@@ -28,6 +28,11 @@ variable "dns_zone_name" {
   description = "Amazon Route53 DNS zone name"
 }
 
+variable "private_dns_zone_name" {
+  type        = "string"
+  description = "Amazon Route53 DNS zone name for internal usage"
+}
+
 variable "vpc_cidr" {
   type        = "string"
   description = "CIDR for VPC"

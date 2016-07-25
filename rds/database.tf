@@ -27,6 +27,6 @@ resource "aws_db_subnet_group" "default" {
   name = "${var.env}-${var.database_id}-db-subnet-group"
   description = "Subnets for the main database"
   subnet_ids = [
-    "${var.private_subnets}"
+    "${var.private_subnet_ids}"
   ]
 }

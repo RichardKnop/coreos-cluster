@@ -1,23 +1,23 @@
 #cloud-config
 
+hostname: "${hostname}"
+
 write_files:
-  - path: /etc/ssl/certs/ca-cert.pem
-    encoding: base64
-    content: |
-      ${ca_cert}
   - path: /etc/hosts
     content: |
       127.0.0.1   localhost
       127.0.0.1   ${host}
-  - path: /home/core/certs/ca-cert.pem
+  # let's add our own CA to trusted certificates
+  - path: /etc/ssl/certs/ca.pem
     encoding: base64
     content: |
       ${ca_cert}
+  # add registry certificate
   - path: /home/core/certs/registry-key.pem
     encoding: base64
     content: |
       ${registry_key}
-  - path: /home/core/certs/registry-cert.pem
+  - path: /home/core/certs/registry.pem
     encoding: base64
     content: |
       ${registry_cert}
@@ -50,7 +50,7 @@ coreos:
           -e REGISTRY_STORAGE=s3 \
           -e REGISTRY_STORAGE_S3_REGION=${region} \
           -e REGISTRY_STORAGE_S3_BUCKET=${storage_bucket} \
-          -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry-cert.pem \
+          -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.pem \
           -e REGISTRY_HTTP_TLS_KEY=/certs/registry-key.pem \
           registry:2
         Restart=always

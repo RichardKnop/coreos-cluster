@@ -28,9 +28,14 @@ variable "cluster_instance_type" {
   description = "EC2 instance type to use for cluster nodes"
 }
 
-variable "private_subnets" {
+variable "private_subnet_ids" {
   type        = "string"
-  description = "Private subnets"
+  description = "Private subnet IDs"
+}
+
+variable "private_subnet_cidrs" {
+  type        = "string"
+  description = "Private subnet CIDR blocks"
 }
 
 variable "coreos_ami" {
@@ -49,6 +54,16 @@ variable "dns_zone_id" {
 }
 
 variable "dns_zone_name" {
+  type        = "string"
+  description = "Amazon Route53 DNS zone name"
+}
+
+variable "private_dns_zone_id" {
+  type        = "string"
+  description = "Amazon Route53 DNS zone identifier"
+}
+
+variable "private_dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
 }
