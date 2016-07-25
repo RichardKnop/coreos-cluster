@@ -5,15 +5,18 @@ hostname: "${hostname}"
 write_files:
   # let's add our own CA to trusted certificates
   - path: /etc/ssl/certs/ca.pem
+    permissions: 0644
     encoding: base64
     content: |
       ${ca_cert}
   # add coreos certificate
   - path: /home/core/certs/coreos-key.pem
+    permissions: 0644
     encoding: base64
     content: |
       ${coreos_key}
   - path: /home/core/certs/coreos.pem
+    permissions: 0644
     encoding: base64
     content: |
       ${coreos_cert}
@@ -25,7 +28,7 @@ write_files:
       # client env vars
       Environment=ETCD_CA_FILE=/etc/ssl/certs/ca.pem
       Environment=ETCD_CERT_FILE=/home/core/certs/coreos.pem
-      Environment=ETCD_KEY_FILE=/home/core/certs/coreos.pem
+      Environment=ETCD_KEY_FILE=/home/core/certs/coreos-key.pem
       # peer env vars
       Environment=ETCD_PEER_CA_FILE=/etc/ssl/certs/ca.pem
       Environment=ETCD_PEER_CERT_FILE=/home/core/certs/coreos.pem
@@ -43,7 +46,7 @@ write_files:
     permissions: 0644
     content: |
       # for etcdctl
-      export ETCDCTL_PEERS=https://127.0.0.1:2379
+      export ETCDCTL_PEERS=https://${hostname}.${cluster_id}.${dns_zone_name}:2379
       export ETCDCTL_CA_FILE=/etc/ssl/certs/ca.pem
       export ETCDCTL_CERT_FILE=/home/core/certs/coreos.pem
       export ETCDCTL_KEY_FILE=/home/core/certs/coreos-key.pem
@@ -68,8 +71,8 @@ coreos:
     listen-peer-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2380
 
   fleet:
-    etcd_servers: "https://${hostname}.${cluster_id}.${dns_zone_name}:2379"
-    metadata: "region=${region}"
+    etcd_servers: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
+    metadata: region=${region}
 
   units:
     - name: update-ca-certificates.service
