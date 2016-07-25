@@ -3,7 +3,11 @@
 
 # CoreOS Cluster
 
-An example of how to provision a CoreOS cluster on AWS using Terraform and Ansible. This example sets up a VPC, private and public networks, NAT server, an RDS database, a CoreOS cluster and properly configures tight security groups.
+An example of how to provision a CoreOS cluster on AWS using Terraform and Ansible. This example sets up a VPC, private and public networks, NAT server, an RDS database, a CoreOS cluster and a private Docker registry and properly configures tight security groups.
+
+The cluster is configured via `cloud-config` user data and runs `etcd2.service` and `fleet.service`. All peer and client traffic is encrypted using self signed certificates.
+
+A private Docker registry is also created at `registry.local` and Docker nodes are properly configured to use it.
 
 # Index
 
@@ -12,6 +16,7 @@ An example of how to provision a CoreOS cluster on AWS using Terraform and Ansib
 * [Requirements](#requirements)
   * [AWS Provisioning](#aws-provisioning)
     * [Environment Variables](#environment-variables)
+    * [SSH Agent](#ssh-agent)
     * [SSL Certificate](#ssl-certificate)
 * [Provisioning](#provisioning)
   * [Variables](#variables)
@@ -19,6 +24,10 @@ An example of how to provision a CoreOS cluster on AWS using Terraform and Ansib
   * [Connecting To Instances](#connecting-to-instances)
   * [Debugging](#debugging)
   * [Recreate Database](#recreate-database)
+* [Managing Cluster](#managing-cluster)
+  * [Private Docker Registry](#private-docker-registry)
+  * [ETCD](#etcd)
+  * [Fleet](#fleet)
 * [Resources](#resources)
 
 # Requirements
@@ -44,6 +53,8 @@ The terraform provider for AWS will read the standard AWS credentials environmen
 - `AWS_DEFAULT_REGION` (eu-west-1)
 
 You can get the credentials from the AWS console.
+
+### SSH Agent
 
 Terraform will look for a deployment key in `~/.ssh` directory when creating a NAT instance. Add the deployment key to the ssh-agent, e.g.:
 
@@ -229,6 +240,37 @@ Sometimes during development it is useful or needed to destroy and recreate the 
 ```
 terraform taint -module=rds -state=$TF_VAR_env.tfstate aws_db_instance.rds
 ```
+
+# Managing Cluster
+
+Once your cluster is app and running, there are plenty of ways to manage it.
+
+## Private Docker Registry
+
+The cluster is configured to use a private Docker registry secured by a self signed certificate. It uses S3 as a storage backend.
+
+To push images to the registry, ssh to the instance and do something like:
+
+```
+git clone https://github.com/RichardKnop/example-api.git
+docker build -t example-api:latest example-api/
+docker tag example-api:latest registry.local/example-api
+docker push registry.local/example-api
+```
+
+You can then pull the image from cluster nodes:
+
+```
+docker pull registry.local/example-api
+```
+
+## ETCD
+
+TODO
+
+## Fleet
+
+TODO
 
 # Resources
 
