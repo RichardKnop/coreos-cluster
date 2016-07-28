@@ -4,26 +4,36 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-vault_data=`ansible-vault view vault/${1}.yml`
+VAULT_DATA=""
 
 function main() {
-  local -r environment="${1}"
+  # Parse arguments
+  if [[ "$#" -ne 1 ]]; then
+    usage
+    exit 1
+  fi
+  local -r env=${1-}
+  VAULT_DATA=`ansible-vault view vault/$env.yml`
 
-  local -r database_host=`get-vault-variable $environment api_database_host`
-  local -r database_port=`get-vault-variable $environment api_database_port`
-  local -r database_user=`get-vault-variable $environment api_database_user`
-  local -r database_password=`get-vault-variable $environment api_database_password`
-  local -r database_name=`get-vault-variable $environment api_database_name`
-  local -r database_max_idle_conns=`get-vault-variable $environment api_database_max_idle_conns`
-  local -r database_max_open_conns=`get-vault-variable $environment api_database_max_open_conns`
-  local -r facebook_app_id=`get-vault-variable $environment facebook_app_id`
-  local -r facebook_app_secret=`get-vault-variable $environment facebook_app_secret`
-  local -r sendgrid_api_key=`get-vault-variable $environment sendgrid_api_key`
-  local -r api_scheme=`get-vault-variable $environment api_scheme`
-  local -r api_host=`get-vault-variable $environment api_host`
-  local -r app_scheme=`get-vault-variable $environment app_scheme`
-  local -r app_host=`get-vault-variable $environment app_host`
-  local -r is_development=`get-vault-variable $environment is_development`
+  check-prereqs
+
+  # Database config
+  local -r database_host=`get-vault-variable api_database_host`
+  local -r database_port=`get-vault-variable api_database_port`
+  local -r database_user=`get-vault-variable api_database_user`
+  local -r database_password=`get-vault-variable api_database_password`
+  local -r database_name=`get-vault-variable api_database_name`
+  local -r database_max_idle_conns=`get-vault-variable api_database_max_idle_conns`
+  local -r database_max_open_conns=`get-vault-variable api_database_max_open_conns`
+
+  # Web config
+  local -r api_scheme=`get-vault-variable api_scheme`
+  local -r api_host=`get-vault-variable api_host`
+  local -r app_scheme=`get-vault-variable app_scheme`
+  local -r app_host=`get-vault-variable app_host`
+
+  # Is development environment?
+  local -r is_development=`get-vault-variable is_development`
 
   echo "{
   \"Database\": {
@@ -42,11 +52,11 @@ function main() {
     \"AuthCodeLifetime\": 3600
   },
   \"Facebook\": {
-    \"AppID\": \"$facebook_app_id\",
-    \"AppSecret\": \"$facebook_app_secret\"
+    \"AppID\": \"TODO\",
+    \"AppSecret\": \"TODO\"
   },
   \"Sendgrid\": {
-    \"APIKey\": \"$sendgrid_api_key\"
+    \"APIKey\": \"TODO\"
   },
   \"Web\": {
     \"Scheme\": \"$api_scheme\",
@@ -63,11 +73,23 @@ function main() {
 }"
 }
 
-function get-vault-variable() {
-  local -r environment="${1}"
-  local -r key="${2}"
+function usage() {
+  echo "Usage: ${0} <environment>"
+  echo
+  echo "<environment> is the environment you want to use to construct config JSON"
+}
 
-  password=$(echo "${vault_data}" | awk -v FS="${2}: " 'NF>1{print $2}')
+function check-prereqs() {
+  if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
+    echo "!!! Ansible Vault is required. Use 'pip install -r requirement.stxt'."
+    exit 1
+  fi
+}
+
+function get-vault-variable() {
+  local -r key="${1}"
+
+  password=$(echo "${VAULT_DATA}" | awk -v FS="$key: " 'NF>1{print $2}')
 
   # Trim double quotes
   temp="${password%\"}"
