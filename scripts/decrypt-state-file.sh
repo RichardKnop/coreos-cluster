@@ -14,7 +14,7 @@ function main() {
 
   check-prereqs
 
-  gpg --batch --use-agent --quiet --decrypt $env.tfstate.gpg > $env.tfstate
+  gpg --batch --use-agent --quiet --decrypt ${env}.tfstate.gpg > ${env}.tfstate
 }
 
 function usage() {

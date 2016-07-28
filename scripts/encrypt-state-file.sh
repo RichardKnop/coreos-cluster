@@ -14,7 +14,7 @@ function main() {
 
   check-prereqs
 
-  gpg -e -r "risoknop@gmail.com" $env.tfstate > $env.tfstate.gpg
+  gpg -e -r "risoknop@gmail.com" ${env}.tfstate > ${env}.tfstate.gpg
 }
 
 function usage() {
