@@ -18,7 +18,7 @@ A private Docker registry is also created at `registry.local` and Docker nodes a
   * [Vault](#vault)
     * [Setting Up GPG-encrypted Vault Support](#setting-up-gpg-encrypted-vault-support)
     * [Encrypt / Decrypt Vault Password](#encrypt--decrypt-vault-password)
-    * [Required Secure Variables](#required--secure-variables)
+    * [Required Secure Variables](#required-secure-variables)
   * [AWS Provisioning](#aws-provisioning)
     * [Environment Variables](#environment-variables)
     * [SSH Agent](#ssh-agent)
