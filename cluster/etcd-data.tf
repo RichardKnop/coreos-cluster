@@ -16,7 +16,7 @@ resource "null_resource" "api_config" {
   provisioner "remote-exec" {
     # Bootstrap script to load data into ETCD
     inline = [
-      "etcdctl set /config/example_api.json ${var.api_config}"
+      "etcdctl set /config/example_api.json '${var.api_config}'"
     ]
   }
 }

@@ -12,7 +12,7 @@ function main() {
     usage
     exit 1
   fi
-  local -r env=${1-}
+  local -r env=${1}
   VAULT_DATA=`ansible-vault view vault/$env.yml`
 
   check-prereqs
@@ -76,12 +76,12 @@ function main() {
 function usage() {
   echo "Usage: ${0} <environment>"
   echo
-  echo "<environment> is the environment you want to use to construct config JSON"
+  echo "<environment> the environment (stage, prod etc)"
 }
 
 function check-prereqs() {
   if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
-    echo "!!! Ansible Vault is required. Use 'pip install -r requirements.txt'."
+    echo "!!! ansible-vault is required. Use 'pip install -r requirements.txt'."
     exit 1
   fi
 }

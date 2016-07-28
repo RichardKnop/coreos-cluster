@@ -4,17 +4,42 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-VAULT_DATA=`ansible-vault view vault/${1}.yml`
+VAULT_DATA=""
 
 function main() {
-  get-vault-variable $1 $2
+  # Parse arguments
+  if [[ "$#" -ne 1 && "$#" -ne 2 ]]; then
+    usage
+    exit 1
+  fi
+  local -r env="${1}"
+  local -r key="${2}"
+
+  check-prereqs
+
+  VAULT_DATA=`ansible-vault view vault/${env}.yml`
+
+  get-vault-variable ${key}
+}
+
+function usage() {
+  echo "Usage: ${0} <environment> <key>"
+  echo
+  echo "<environment> the environment (stage, prod etc)"
+  echo "<key> the key you want to get from encrypted vault file"
+}
+
+function check-prereqs() {
+  if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
+    echo "!!! ansible-vault is required. Use 'pip install -r requirements.txt'."
+    exit 1
+  fi
 }
 
 function get-vault-variable() {
-  local -r environment="${1}"
-  local -r key="${2}"
+  local -r key="${1}"
 
-  password=$(echo "${VAULT_DATA}" | awk -v FS="${2}: " 'NF>1{print $2}')
+  password=$(echo "${VAULT_DATA}" | awk -v FS="${key}: " 'NF>1{print $2}')
 
   # Trim double quotes
   temp="${password%\"}"
