@@ -81,7 +81,7 @@ function usage() {
 
 function check-prereqs() {
   if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
-    echo "!!! Ansible Vault is required. Use 'pip install -r requirement.stxt'."
+    echo "!!! Ansible Vault is required. Use 'pip install -r requirements.txt'."
     exit 1
   fi
 }
