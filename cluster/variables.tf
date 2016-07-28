@@ -87,13 +87,3 @@ variable "force_destroy" {
   type        = "string"
   description = "Delete S3 buckets content"
 }
-
-variable "nat_public_ip" {
-  type        = "string"
-  description = "Public IP address of bastion host used to run remote-exec provisioners"
-}
-
-variable "api_config" {
-  type        = "string"
-  description = "API JSON configuration to load into ETCD"
-}

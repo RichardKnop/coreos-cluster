@@ -2,13 +2,10 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": [
-        "s3:*"
-      ],
+      "Sid": "Stmt1469721793336",
+      "Action": "s3:*",
       "Effect": "Allow",
-      "Resource": [
-        "*"
-      ]
+      "Resource": "*"
     }
   ]
 }

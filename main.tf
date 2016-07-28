@@ -44,8 +44,6 @@ module "cluster" {
   ca_private_key_pem = "${module.ca.ca_private_key_pem}"
   ca_cert_pem = "${module.ca.ca_cert_pem}"
   force_destroy = "${var.force_destroy}"
-  nat_public_ip = "${module.vpc.nat_public_ip}"
-  api_config = "${var.api_config}"
 }
 
 module "registry" {
@@ -83,4 +81,16 @@ module "rds" {
   db_password = "${var.db_password}"
   private_dns_zone_id = "${module.vpc.private_dns_zone_id}"
   private_dns_zone_name = "${var.private_dns_zone_name}"
+}
+
+module "api" {
+  source = "./api"
+
+  bastion_host = "${module.vpc.nat_public_ip}"
+  bastion_user = "ec2-user"
+  node_ids = "${module.cluster.node_ids}"
+  node_private_ips = "${module.cluster.node_private_ips}"
+  node_user = "core"
+  etcd_path = "/config/example_api.json"
+  etcd_config = "${var.api_config}"
 }

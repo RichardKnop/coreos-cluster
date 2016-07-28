@@ -2,12 +2,13 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Effect": "Allow",
+      "Sid": "Stmt1469721653500",
       "Action": [
         "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
         "elasticloadbalancing:RegisterInstancesWithLoadBalancer"
       ],
-      "Resource": "${elb_arn}"
+      "Effect": "Allow",
+      "Resource": "*"
     }
   ]
 }
