@@ -44,6 +44,8 @@ module "cluster" {
   ca_private_key_pem = "${module.ca.ca_private_key_pem}"
   ca_cert_pem = "${module.ca.ca_cert_pem}"
   force_destroy = "${var.force_destroy}"
+  nat_public_ip = "${module.vpc.nat_public_ip}"
+  api_config = "${var.api_config}"
 }
 
 module "registry" {

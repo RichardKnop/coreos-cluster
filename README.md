@@ -1,9 +1,10 @@
-[1]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
-[2]: http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
+[1]: http://blog.ghostinthemachines.com/2015/03/01/how-to-use-gpg-command-line/
+[2]: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
+[3]: http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
 
 # CoreOS Cluster
 
-An example of how to provision a CoreOS cluster on AWS using Terraform and Ansible. This example sets up a VPC, private and public networks, NAT server, an RDS database, a CoreOS cluster and a private Docker registry and properly configures tight security groups.
+An example of how to provision a CoreOS cluster on AWS using Terraform. This example sets up a VPC, private and public networks, NAT server, an RDS database, a CoreOS cluster and a private Docker registry and properly configures tight security groups.
 
 The cluster is configured via `cloud-config` user data and runs `etcd2.service` and `fleet.service`. All peer and client traffic is encrypted using self signed certificates.
 
@@ -14,6 +15,10 @@ A private Docker registry is also created at `registry.local` and Docker nodes a
 * [CoreOS Cluster](#coreos-cluster)
 * [Index](#index)
 * [Requirements](#requirements)
+  * [Vault](#vault)
+    * [Setting Up GPG-encrypted Vault Support](#setting-up-gpg-encrypted-vault-support)
+    * [Encrypt / Decrypt Vault Password](#encrypt--decrypt-vault-password)
+    * [Required Secure Variables](#required--secure-variables)
   * [AWS Provisioning](#aws-provisioning)
     * [Environment Variables](#environment-variables)
     * [SSH Agent](#ssh-agent)
@@ -42,7 +47,128 @@ You need an SSH key. The private key needs to be chmod to 600.
 
 You need the cloud provider credentials. These will be entered on the command line.
 
-## Requirements For AWS Provisioning
+## Vault
+
+### Setting Up GPG-encrypted Vault Support
+
+You will need to have setup [gpg-agent](https://www.gnupg.org/) on your computer before you start.
+
+```
+brew install gpg
+brew install gpg-agent
+```
+
+If you haven't already generated your PGP key (it's ok to accept the default options if you never done this before):
+
+```
+gpg --gen-key
+```
+
+Get your KEYID from your keyring:
+
+```
+gpg --list-secret-keys | grep sec
+```
+
+This will probably be pre-fixed with 2048R/ or 4096R/ and look something like 93B1CD02.
+
+Send your public key to PGP key server:
+
+```
+gpg --keyserver pgp.mit.edu --send-keys KEYID
+```
+
+To import a public key (e.g. when a new engineer joins the team):
+
+```
+gpg --keyserver pgp.mit.edu --search-keys john@doe.com
+```
+
+Create `~/.bash_gpg`:
+
+```
+envfile="${HOME}/.gnupg/gpg-agent.env"
+
+if test -f "$envfile" && kill -0 $(grep GPG_AGENT_INFO "$envfile" | cut -d: -f 2) 2>/dev/null; then
+  eval "$(cat "$envfile")"
+else
+  eval "$(gpg-agent --daemon --log-file=~/.gpg/gpg.log --write-env-file "$envfile")"
+fi
+export GPG_AGENT_INFO  # the env file does not contain the export statement
+```
+
+Add to `~/.bash_profile`:
+
+```
+GPG_AGENT=$(which gpg-agent)
+GPG_TTY=`tty`
+export GPG_TTY
+
+if [ -f ${GPG_AGENT} ]; then
+  . ~/.bash_gpg
+fi
+```
+
+Start a new shell or source the current environment:
+
+```
+source ~/.bash_profile
+```
+
+### Encrypt / Decrypt Vault Password
+
+Encrypt the vault password:
+
+```
+echo "the vault password" | gpg -e -r "your_email_address" > vault_password.gpg
+```
+
+Ansible Vault will decrypt the file based using PGP key from your keyring. See `vault_password_file` option in the `ansible.cfg` configuration file.
+
+### Required Secure Variables
+
+This repository is using `ansible-vault` to secure sensitive information. Secure variables for each environment are stored in a separate file in `vault` directory:
+
+```
+.
+├── vault
+│   ├── stage.yml
+│   └── prod.yml
+│
+└── ...
+```
+
+If you already know the password you do not need to recreate the `vault/<env-name-prefix>.yml` file.
+
+You can edit variables stored in the vault:
+
+```
+ansible-vault edit vault/<env-name-prefix>.yml
+```
+
+Required contents for `vault/<env-name-prefix>.yml` (if you don't know the password):
+
+```yml
+dns_zone_id: "dns_zone_id"
+dns_zone_name: "dns_zone_name"
+ssl_certificate_id: "ssl_certificate_id"
+aws_region: "eu-west-1"
+api_database_type: "postgres"
+api_database_host: "database1.local"
+api_database_port: 5432
+api_database_user: "example_api"
+api_database_password: "test_password"
+api_database_name: "example_api"
+api_database_max_idle_conns: 5
+api_database_max_open_conns: 5
+api_scheme: "https"
+api_host: "localhost:8080"
+app_scheme: "https"
+app_host: "localhost:8000"
+is_development: true
+```
+
+## AWS Provisioning
 
 ### Environment Variables
 
@@ -120,12 +246,12 @@ Render an SSH configuration file, i.e.:
 ./scripts/render-ssh-config.sh <env-name-prefix> <domain-name>
 ```
 
-Create virtual Python environment for Ansible:
+Create virtual Python environment:
 
 ```
 virtualenv .venv
 source .venv/bin/activate
-pip install -r ansible/requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Variables
@@ -147,17 +273,23 @@ export TF_VAR_env=prod
 Export DNS variables:
 
 ```
-export TF_VAR_dns_zone_id=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
-export TF_VAR_dns_zone_name=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
-export TF_VAR_ssl_certificate_id=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
+export TF_VAR_dns_zone_id=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
+export TF_VAR_dns_zone_name=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
+export TF_VAR_ssl_certificate_id=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
 ```
 
 Export DB variables from the `ansible-vault`:
 
 ```
-export TF_VAR_db_name=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_name)
-export TF_VAR_db_user=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_user)
-export TF_VAR_db_password=$(cd ansible ; ./scripts/get-vault-variable.sh $TF_VAR_env database_password)
+export TF_VAR_db_name=$(./scripts/get-vault-variable.sh $TF_VAR_env database_name)
+export TF_VAR_db_user=$(./scripts/get-vault-variable.sh $TF_VAR_env database_user)
+export TF_VAR_db_password=$(./scripts/get-vault-variable.sh $TF_VAR_env database_password)
+```
+
+Load JSON configuration for API service:
+
+```
+export TF_VAR_api_config=$(./scripts/get-api-config.sh $TF_VAR_env)
 ```
 
 For test environments, it's useful to disable final DB snapshot:
@@ -274,5 +406,6 @@ TODO
 
 # Resources
 
-- [Creating EC2 Key Pairs][1]
-- [Create a Public Hosted Zone][2]
+- [How To Use GPG on the Command Line][1]
+- [Creating EC2 Key Pairs][2]
+- [Create a Public Hosted Zone][3]

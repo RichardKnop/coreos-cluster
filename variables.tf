@@ -140,3 +140,8 @@ variable "force_destroy" {
   description = "Delete S3 buckets content"
   default     = false
 }
+
+variable "api_config" {
+  type        = "string"
+  description = "API JSON configuration to load into ETCD"
+}
