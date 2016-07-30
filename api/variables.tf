@@ -1,3 +1,8 @@
+variable "env" {
+  type        = "string"
+  description = "Environment name"
+}
+
 variable "bastion_host" {
   type        = "string"
   description = "Bastion host to run remote-exec provisioners"
@@ -31,4 +36,19 @@ variable "etcd_path" {
 variable "etcd_config" {
   type        = "string"
   description = "Configuration to store in ETCD (JSON string)"
+}
+
+variable "public_subnet_ids" {
+  type        = "string"
+  description = "Public subnet IDs"
+}
+
+variable "web_security_group_id" {
+  type        = "string"
+  description = "Web security group ID"
+}
+
+variable "ssl_certificate_id" {
+  type        = "string"
+  description = "The id of an SSL certificate uploaded to AWS IAM"
 }

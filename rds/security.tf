@@ -7,7 +7,7 @@ resource "aws_security_group" "rds" {
     from_port       = "${var.db_port}"
     to_port         = "${var.db_port}"
     protocol        = "tcp"
-    security_groups = ["${split(",", var.user_security_group_ids)}"]
+    security_groups = ["${var.user_security_group_ids}"]
   }
 
   tags = {

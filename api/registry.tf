@@ -1,4 +1,4 @@
-resource "null_resource" "etcd_config" {
+resource "null_resource" "build_release" {
   # Bootstrap script can run on any instance of the cluster
   # So we just choose the first in this case
   connection {
@@ -9,10 +9,12 @@ resource "null_resource" "etcd_config" {
   }
 
   provisioner "remote-exec" {
-    # Write configuration to etcd
+    # Build a container and push it to the private registry
     inline = [
-      "source /etc/profile.d/etcd-envvars.sh",
-      "etcdctl set ${var.etcd_path} '${var.etcd_config}'",
+      "git clone https://github.com/RichardKnop/example-api.git",
+      "docker build -t example-api:latest example-api/",
+      "docker tag example-api:latest registry.local/example-api",
+      "docker push registry.local/example-api",
     ]
   }
 }

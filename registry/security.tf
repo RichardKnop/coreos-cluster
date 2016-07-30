@@ -7,7 +7,7 @@ resource "aws_security_group" "registry" {
     from_port       = "${var.registry_port}"
     to_port         = "${var.registry_port}"
     protocol        = "tcp"
-    security_groups = ["${split(",", var.user_security_group_ids)}"]
+    security_groups = ["${var.user_security_group_ids}"]
   }
 
   tags = {
