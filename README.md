@@ -388,24 +388,43 @@ To push images to the registry, ssh to the instance and do something like:
 
 ```
 git clone https://github.com/RichardKnop/example-api.git
-docker build -t example-api:latest example-api/
-docker tag example-api:latest registry.local/example-api
-docker push registry.local/example-api
+cd example-api
+./build-release.sh v0.0.0 --no-dry-run -y
 ```
 
 You can then pull the image from cluster nodes:
 
 ```
-docker pull registry.local/example-api
+docker pull registry.local/example-api:latest
 ```
 
 ## ETCD
 
-TODO
+Inspect cluster health:
+
+```
+etcdctl cluster-health
+```
 
 ## Fleet
 
-TODO
+List machines:
+
+```
+fleetctl list-machines
+```
+
+List units:
+
+```
+fleetctl list-units
+```
+
+Start a unit:
+
+```
+fleetctl start example-api.service
+```
 
 # Resources
 
