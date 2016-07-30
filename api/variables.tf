@@ -28,6 +28,21 @@ variable "node_user" {
   description = "Node SSH user"
 }
 
+variable "registry_id" {
+  type        = "string"
+  description = "Docker registry ID"
+}
+
+variable "registry_private_ip" {
+  type        = "string"
+  description = "Private IP address of the Docker registry"
+}
+
+variable "registry_user" {
+  type        = "string"
+  description = "Docker registry SSH user"
+}
+
 variable "etcd_path" {
   type        = "string"
   description = "Path to store the configuration"

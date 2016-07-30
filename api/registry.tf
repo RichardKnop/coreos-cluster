@@ -4,8 +4,8 @@ resource "null_resource" "build_release" {
   connection {
     bastion_host = "${var.bastion_host}"
     bastion_user = "${var.bastion_user}"
-    host         = "${element(split(",", var.node_private_ips), 0)}"
-    user         = "${var.node_user}"
+    host         = "${var.registry_private_ip}"
+    user         = "${var.registry_user}"
   }
 
   provisioner "remote-exec" {
