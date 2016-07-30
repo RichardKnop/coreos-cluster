@@ -9,38 +9,63 @@ write_files:
     encoding: base64
     content: |
       ${ca_cert}
-  # add coreos certificate
-  - path: /home/core/certs/coreos-key.pem
+  - path: /home/core/certs/ca.pem
     permissions: 0644
     encoding: base64
     content: |
-      ${coreos_key}
-  - path: /home/core/certs/coreos.pem
+      ${ca_cert}
+  # add certificates certificate
+  - path: /home/core/certs/server-key.pem
     permissions: 0644
     encoding: base64
     content: |
-      ${coreos_cert}
+      ${server_key}
+  - path: /home/core/certs/server.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${server_cert}
+  - path: /home/core/certs/client-server-key.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${client_server_key}
+  - path: /home/core/certs/client-server.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${client_server_cert}
+  - path: /home/core/certs/client-key.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${client_key}
+  - path: /home/core/certs/client.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${client_cert}
   # tell etcd2 and fleet where our certificates are:
   - path: /run/systemd/system/etcd2.service.d/30-certificates.conf
     permissions: 0644
     content: |
       [Service]
-      # client env vars
+      # Client certificates (etcdctl, fleetctl and so on)
       Environment=ETCD_CA_FILE=/etc/ssl/certs/ca.pem
-      Environment=ETCD_CERT_FILE=/home/core/certs/coreos.pem
-      Environment=ETCD_KEY_FILE=/home/core/certs/coreos-key.pem
-      # peer env vars
+      Environment=ETCD_CERT_FILE=/home/core/certs/client.pem
+      Environment=ETCD_KEY_FILE=/home/core/certs/client-key.pem
+      # Client-server certificates (communication between nodes)
       Environment=ETCD_PEER_CA_FILE=/etc/ssl/certs/ca.pem
-      Environment=ETCD_PEER_CERT_FILE=/home/core/certs/coreos.pem
-      Environment=ETCD_PEER_KEY_FILE=/home/core/certs/coreos-key.pem
+      Environment=ETCD_PEER_CERT_FILE=/home/core/certs/client-server.pem
+      Environment=ETCD_PEER_KEY_FILE=/home/core/certs/client-server-key.pem
   - path: /run/systemd/system/fleet.service.d/30-certificates.conf
     permissions: 0644
     content: |
       [Service]
       # client auth certs
       Environment=FLEET_ETCD_CAFILE=/etc/ssl/certs/ca.pem
-      Environment=FLEET_ETCD_CERTFILE=/home/core/certs/coreos.pem
-      Environment=FLEET_ETCD_KEYFILE=/home/core/certs/coreos-key.pem
+      Environment=FLEET_ETCD_CERTFILE=/home/core/certs/client.pem
+      Environment=FLEET_ETCD_KEYFILE=/home/core/certs/client-key.pem
   # etcdctl, fleetctl
   - path: /etc/profile.d/etcd-envvars.sh
     permissions: 0644
@@ -48,8 +73,8 @@ write_files:
       # for etcdctl
       export ETCDCTL_PEERS=https://${hostname}.${cluster_id}.${dns_zone_name}:2379
       export ETCDCTL_CA_FILE=/etc/ssl/certs/ca.pem
-      export ETCDCTL_CERT_FILE=/home/core/certs/coreos.pem
-      export ETCDCTL_KEY_FILE=/home/core/certs/coreos-key.pem
+      export ETCDCTL_CERT_FILE=/home/core/certs/client.pem
+      export ETCDCTL_KEY_FILE=/home/core/certs/client-key.pem
 
       # for fleetctl. Note: FLEETCTL_ENDPOINT only take one url
       export FLEETCTL_ENDPOINT=$ETCDCTL_PEERS
