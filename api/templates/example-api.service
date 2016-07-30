@@ -5,19 +5,19 @@ Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull registry.local/example-api:latest
 ExecStartPre=-/usr/bin/docker kill example-api
 ExecStartPre=-/usr/bin/docker rm example-api
-ExecStartPre=/usr/bin/docker pull registry.local/example-api:${version}
 ExecStart=/usr/bin/docker run \
 	--name example-api \
 	-v /home/core/certs:/mnt \
-	-e ETCD_ENDPOINT=https://coreos0.cluster1.local:2379 \
+	-e ETCD_ENDPOINT=https://%H.${private_dns_zone_name}:2379 \
 	-e ETCD_CERT_FILE=/mnt/client.pem \
 	-e ETCD_KEY_FILE=/mnt/client-key.pem \
 	-e ETCD_CA_FILE=/mnt/ca.pem \
 	-p 8080:8080 \
 	--log-driver=journald \
-	example-api:${version}
+	registry.local/example-api:latest
 ExecStop=/usr/bin/docker stop example-api
 
 [X-Fleet]

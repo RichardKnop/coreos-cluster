@@ -3,6 +3,16 @@ resource "aws_security_group" "node" {
   description = "Security group for cluster nodes"
   vpc_id = "${var.vpc_id}"
 
+  # Open couple of ports for load balancers
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [
+      "${var.web_security_group_id}",
+    ]
+  }
+
   tags = {
     Name = "${var.env}-${var.cluster_id}-node-sg"
   }

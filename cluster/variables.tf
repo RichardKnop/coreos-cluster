@@ -48,6 +48,11 @@ variable "default_security_group_id" {
   description = "Default security group ID"
 }
 
+variable "web_security_group_id" {
+  type        = "string"
+  description = "Web security group ID"
+}
+
 variable "dns_zone_id" {
   type        = "string"
   description = "Amazon Route53 DNS zone identifier"

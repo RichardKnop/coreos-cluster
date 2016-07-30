@@ -71,7 +71,7 @@ write_files:
     permissions: 0644
     content: |
       # for etcdctl
-      export ETCDCTL_PEERS=https://${hostname}.${cluster_id}.${dns_zone_name}:2379
+      export ETCDCTL_PEERS=https://${hostname}.${dns_zone_name}:2379
       export ETCDCTL_CA_FILE=/etc/ssl/certs/ca.pem
       export ETCDCTL_CERT_FILE=/home/core/certs/client.pem
       export ETCDCTL_KEY_FILE=/home/core/certs/client-key.pem
@@ -90,14 +90,16 @@ coreos:
     name: ${hostname}
     discovery-srv: ${cluster_id}.${dns_zone_name}
     initial-cluster-token: ${cluster_id}
-    advertise-client-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
-    initial-advertise-peer-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2380
-    listen-client-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
-    listen-peer-urls: https://${hostname}.${cluster_id}.${dns_zone_name}:2380
+    advertise-client-urls: https://${hostname}.${dns_zone_name}:2379
+    initial-advertise-peer-urls: https://${hostname}.${dns_zone_name}:2380
+    listen-client-urls: https://${hostname}.${dns_zone_name}:2379
+    listen-peer-urls: https://${hostname}.${dns_zone_name}:2380
 
   fleet:
-    etcd_servers: https://${hostname}.${cluster_id}.${dns_zone_name}:2379
-    metadata: region=${region}
+    etcd_servers: https://${hostname}.${dns_zone_name}:2379
+    metadata:
+      - region=${region}
+      - hostname=${hostname}
 
   units:
     - name: update-ca-certificates.service

@@ -3,7 +3,7 @@ resource "template_file" "cloud_config" {
   template = "${file("${path.module}/templates/cloud-config.yml")}"
 
   vars {
-    hostname = "coreos${count.index}"
+    hostname = "coreos${count.index}.${var.cluster_id}"
     ca_cert = "${base64encode(var.ca_cert_pem)}"
     server_key = "${base64encode(element(tls_private_key.server.*.private_key_pem, count.index))}"
     server_cert = "${base64encode(element(tls_locally_signed_cert.server.*.cert_pem, count.index))}"

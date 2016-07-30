@@ -21,7 +21,7 @@ resource "tls_cert_request" "server" {
     # private DNS alias
     "coreos${count.index}.${var.cluster_id}.${var.private_dns_zone_name}",
     # hostname
-    "coreos${count.index}",
+    "coreos${count.index}.${var.cluster_id}",
   ]
 }
 
@@ -65,7 +65,7 @@ resource "tls_cert_request" "client_server" {
     # private DNS alias
     "coreos${count.index}.${var.cluster_id}.${var.private_dns_zone_name}",
     # hostname
-    "coreos${count.index}",
+    "coreos${count.index}.${var.cluster_id}",
   ]
 }
 
@@ -110,7 +110,7 @@ resource "tls_cert_request" "client" {
     # private DNS alias
     "coreos${count.index}.${var.cluster_id}.${var.private_dns_zone_name}",
     # hostname
-    "coreos${count.index}",
+    "coreos${count.index}.${var.cluster_id}",
   ]
 }
 

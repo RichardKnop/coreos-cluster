@@ -43,16 +43,6 @@ variable "registry_user" {
   description = "Docker registry SSH user"
 }
 
-variable "etcd_path" {
-  type        = "string"
-  description = "Path to store the configuration"
-}
-
-variable "etcd_config" {
-  type        = "string"
-  description = "Configuration to store in ETCD (JSON string)"
-}
-
 variable "public_subnet_ids" {
   type        = "string"
   description = "Public subnet IDs"
@@ -83,6 +73,11 @@ variable "dns_prefix" {
   description = "DNS prefix (e.g. stage-api. or api.)"
 }
 
+variable "private_dns_zone_name" {
+  type        = "string"
+  description = "Amazon Route53 DNS zone name"
+}
+
 variable "git_repo" {
   type        = "string"
   description = "Git repository URL"
@@ -96,4 +91,14 @@ variable "git_dest" {
 variable "version" {
   type        = "string"
   description = "API version to deploy"
+}
+
+variable "etcd_path" {
+  type        = "string"
+  description = "Path to store the configuration"
+}
+
+variable "etcd_config" {
+  type        = "string"
+  description = "Configuration to store in ETCD (JSON string)"
 }
