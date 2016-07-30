@@ -7,7 +7,7 @@ Requires=docker.service
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill example-api
 ExecStartPre=-/usr/bin/docker rm example-api
-ExecStartPre=/usr/bin/docker pull registry.local/example-api
+ExecStartPre=/usr/bin/docker pull registry.local/example-api:${version}
 ExecStart=/usr/bin/docker run \
 	--name example-api \
 	-v /home/core/certs:/mnt \
@@ -17,7 +17,7 @@ ExecStart=/usr/bin/docker run \
 	-e ETCD_CA_FILE=/mnt/ca.pem \
 	-p 8080:8080 \
 	--log-driver=journald \
-	example-api:latest
+	example-api:${version}
 ExecStop=/usr/bin/docker stop example-api
 
 [X-Fleet]

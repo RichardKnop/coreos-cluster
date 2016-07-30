@@ -103,4 +103,7 @@ module "api" {
   dns_zone_id = "${var.dns_zone_id}"
   dns_zone_name = "${var.dns_zone_name}"
   dns_prefix = "${var.api_dns_prefix}"
+  git_repo = "https://github.com/RichardKnop/example-api.git"
+  git_dest = "example-api"
+  version = "v0.0.0"
 }

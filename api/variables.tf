@@ -82,3 +82,18 @@ variable "dns_prefix" {
   type        = "string"
   description = "DNS prefix (e.g. stage-api. or api.)"
 }
+
+variable "git_repo" {
+  type        = "string"
+  description = "Git repository URL"
+}
+
+variable "git_dest" {
+  type        = "string"
+  description = "Directory where to store the repository"
+}
+
+variable "version" {
+  type        = "string"
+  description = "API version to deploy"
+}

@@ -11,10 +11,8 @@ resource "null_resource" "build_release" {
   provisioner "remote-exec" {
     # Build a container and push it to the private registry
     inline = [
-      "git clone https://github.com/RichardKnop/example-api.git",
-      "docker build -t example-api:latest example-api/",
-      "docker tag example-api:latest registry.local/example-api",
-      "docker push registry.local/example-api",
+      "if cd ${var.git_dest}; then git pull; else git clone ${var.git_repo} ${var.git_dest}; cd ${var.git_dest}; fi",
+      "./build-release.sh ${var.version} --no-dry-run -y",
     ]
   }
 }
