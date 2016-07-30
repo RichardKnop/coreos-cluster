@@ -22,6 +22,8 @@ resource "tls_cert_request" "coreos" {
     "coreos${count.index}.${var.cluster_id}.${var.private_dns_zone_name}",
     # hostname
     "coreos${count.index}",
+    # Docker bridge IP
+    "172.17.0.1",
   ]
 }
 

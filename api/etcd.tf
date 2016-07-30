@@ -1,4 +1,9 @@
 resource "null_resource" "etcd_config" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers {
+    cluster_instance_ids = "${var.node_ids}"
+  }
+
   # Bootstrap script can run on any instance of the cluster
   # So we just choose the first in this case
   connection {
