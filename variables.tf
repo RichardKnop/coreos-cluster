@@ -145,3 +145,8 @@ variable "api_config" {
   type        = "string"
   description = "API JSON configuration to load into ETCD"
 }
+
+variable "api_dns_prefix" {
+  type        = "string"
+  description = "DNS prefix (e.g. stage-api. or api.)"
+}

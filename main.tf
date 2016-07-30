@@ -97,4 +97,7 @@ module "api" {
   public_subnet_ids = "${split(",", module.vpc.public_subnet_ids)}"
   web_security_group_id = "${module.vpc.web_security_group_id}"
   ssl_certificate_id = "${var.ssl_certificate_id}"
+  dns_zone_id = "${var.dns_zone_id}"
+  dns_zone_name = "${var.dns_zone_name}"
+  dns_prefix = "${var.api_dns_prefix}"
 }

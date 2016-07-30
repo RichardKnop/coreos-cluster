@@ -153,6 +153,7 @@ dns_zone_id: "dns_zone_id"
 dns_zone_name: "dns_zone_name"
 ssl_certificate_id: "ssl_certificate_id"
 aws_region: "eu-west-1"
+
 api_database_type: "postgres"
 api_database_host: "database1.local"
 api_database_port: 5432
@@ -165,6 +166,7 @@ api_scheme: "https"
 api_host: "localhost:8080"
 app_scheme: "https"
 app_host: "localhost:8000"
+api_dns_prefix: "<environment>-api."
 is_development: true
 ```
 
@@ -276,6 +278,7 @@ Export DNS variables:
 export TF_VAR_dns_zone_id=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
 export TF_VAR_dns_zone_name=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
 export TF_VAR_ssl_certificate_id=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
+export TF_VAR_api_dns_prefix=$(./scripts/get-vault-variable.sh $TF_VAR_env api_dns_prefix)
 ```
 
 Export DB variables from the `ansible-vault`:
