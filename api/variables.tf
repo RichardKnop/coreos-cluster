@@ -3,6 +3,11 @@ variable "env" {
   description = "Environment name"
 }
 
+variable "cluster_size" {
+  type        = "string"
+  description = "Cluster size (number of nodes)"
+}
+
 variable "bastion_host" {
   type        = "string"
   description = "Bastion host to run remote-exec provisioners"

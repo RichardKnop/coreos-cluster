@@ -53,9 +53,9 @@ variable "nat_instance_type" {
   description = "EC2 instance type to use for NAT server"
 
   default = {
-    test  = "t2.micro"
-    stage = "t2.micro"
-    prod  = "t2.micro"
+    test  = "t2.small"
+    stage = "t2.small"
+    prod  = "t2.small"
   }
 }
 
@@ -64,9 +64,9 @@ variable "registry_instance_type" {
   description = "Docker registry instance type"
 
   default = {
-    test  = "t2.micro"
-    stage = "t2.micro"
-    prod  = "t2.micro"
+    test  = "t2.small"
+    stage = "t2.small"
+    prod  = "t2.small"
   }
 }
 

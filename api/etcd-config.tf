@@ -9,7 +9,7 @@ resource "null_resource" "etcd_config" {
   connection {
     bastion_host = "${var.bastion_host}"
     bastion_user = "${var.bastion_user}"
-    host         = "${element(split(",", var.node_private_ips), 0)}"
+    host         = "${element(var.node_private_ips, 0)}"
     user         = "${var.node_user}"
   }
 

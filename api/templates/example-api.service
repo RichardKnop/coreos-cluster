@@ -4,6 +4,8 @@ After=docker.service
 Requires=docker.service
 
 [Service]
+Restart=always
+RestartSec=10s
 TimeoutStartSec=0
 ExecStartPre=/usr/bin/docker pull registry.local/example-api:latest
 ExecStartPre=-/usr/bin/docker kill example-api
@@ -15,9 +17,10 @@ ExecStart=/usr/bin/docker run \
 	-e ETCD_CERT_FILE=/mnt/client.pem \
 	-e ETCD_KEY_FILE=/mnt/client-key.pem \
 	-e ETCD_CA_FILE=/mnt/ca.pem \
-	-p 8080:8080 \
+	-e VIRTUAL_HOST=${dns_prefix}${dns_zone_name} \
 	--log-driver=journald \
-	registry.local/example-api:latest
+	registry.local/example-api:latest \
+	example-api runserver
 ExecStop=/usr/bin/docker stop example-api
 
 [X-Fleet]

@@ -88,10 +88,11 @@ module "api" {
   source = "./api"
 
   env = "${var.env}"
+  cluster_size = "${lookup(var.cluster_size, var.env)}"
   bastion_host = "${module.vpc.nat_public_ip}"
   bastion_user = "ec2-user"
   node_ids = "${split(",", module.cluster.node_ids)}"
-  node_private_ips = "${module.cluster.node_private_ips}"
+  node_private_ips = "${split(",", module.cluster.node_private_ips)}"
   node_user = "core"
   registry_id = "${module.registry.registry_id}"
   registry_private_ip = "${module.registry.registry_private_ip}"
