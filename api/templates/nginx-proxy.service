@@ -13,7 +13,7 @@ ExecStartPre=-/usr/bin/docker rm nginx-proxy
 ExecStart=/usr/bin/docker run \
 	--name nginx-proxy \
 	-v /var/run/docker.sock:/tmp/docker.sock:ro \
-  -p 80:80 \
+	-p 80:80 \
 	--log-driver=journald \
 	jwilder/nginx-proxy:latest
 ExecStop=/usr/bin/docker stop nginx-proxy
