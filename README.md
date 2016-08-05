@@ -18,11 +18,11 @@ A private Docker registry is also created at `registry.local` and Docker nodes a
   * [Vault](#vault)
     * [Setting Up GPG-encrypted Vault Support](#setting-up-gpg-encrypted-vault-support)
     * [Encrypt / Decrypt Vault Password](#encrypt--decrypt-vault-password)
+    * [Create SSL Certificate](#create-ssl-certificate)
     * [Required Secure Variables](#required-secure-variables)
   * [AWS Provisioning](#aws-provisioning)
     * [Environment Variables](#environment-variables)
     * [SSH Agent](#ssh-agent)
-    * [SSL Certificate](#ssl-certificate)
 * [Provisioning](#provisioning)
   * [Variables](#variables)
   * [Apply Execution Plan](#apply-execution-plan)
@@ -125,72 +125,7 @@ echo "the vault password" | gpg -e -r "your_email_address" > vault_password.gpg
 
 Ansible Vault will decrypt the file based using PGP key from your keyring. See `vault_password_file` option in the `ansible.cfg` configuration file.
 
-### Required Secure Variables
-
-This repository is using `ansible-vault` to secure sensitive information. Secure variables for each environment are stored in a separate file in `vault` directory:
-
-```
-.
-├── vault
-│   ├── stage.yml
-│   └── prod.yml
-│
-└── ...
-```
-
-If you already know the password you do not need to recreate the `vault/<env-name-prefix>.yml` file.
-
-You can edit variables stored in the vault:
-
-```
-ansible-vault edit vault/<env-name-prefix>.yml
-```
-
-Required contents for `vault/<env-name-prefix>.yml` (if you don't know the password):
-
-```yml
-dns_zone_id: "dns_zone_id"
-dns_zone_name: "dns_zone_name"
-ssl_certificate_id: "ssl_certificate_id"
-aws_region: "eu-west-1"
-
-api_database_type: "postgres"
-api_database_host: "database1.local"
-api_database_port: 5432
-api_database_user: "example_api"
-api_database_password: "test_password"
-api_database_name: "example_api"
-api_database_max_idle_conns: 5
-api_database_max_open_conns: 5
-api_scheme: "https"
-api_host: "localhost:8080"
-app_scheme: "https"
-app_host: "localhost:8000"
-api_dns_prefix: "<environment>-api."
-is_development: true
-```
-
-## AWS Provisioning
-
-### Environment Variables
-
-The terraform provider for AWS will read the standard AWS credentials environment variables. You must have these variables exported:
-
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_DEFAULT_REGION` (eu-west-1)
-
-You can get the credentials from the AWS console.
-
-### SSH Agent
-
-Terraform will look for a deployment key in `~/.ssh` directory when creating a NAT instance. Add the deployment key to the ssh-agent, e.g.:
-
-```
-ssh-add ~/.ssh/stage-deployer
-```
-
-### SSL Certificate
+### Create SSL Certificate
 
 An SSL certificate can be purchased from [Comodo](https://www.comodo.com/).
 
@@ -215,30 +150,81 @@ Secondly, generate a certificate chain from intermediate and root certificates o
 cat COMODORSADomainValidationSecureServerCA.pem COMODORSAAddTrustCA.pem AddTrustExternalCARoot.pem > your_domain_com_certificate_chain.pem
 ```
 
-Finally, upload the certificate to AWS IAM:
+### Required Secure Variables
+
+This repository is using `ansible-vault` to secure sensitive information. Secure variables for each environment are stored in a separate file in `vault` directory:
 
 ```
-aws iam upload-server-certificate --server-certificate-name yourdomain-com-certificate \
---certificate-body file://STAR_yourdomain_com.pem --private-key file://yourdomain_com.pem \
---certificate-chain file://yourdomain_com_certificate_chain.pem
+.
+├── vault
+│   ├── stage.yml
+│   └── prod.yml
+│
+└── ...
 ```
 
-Result:
+If you already know the password you do not need to recreate the `vault/<env-name-prefix>.yml` file.
 
-```json
-{
-  "ServerCertificateMetadata": {
-    "ServerCertificateId": "BLABLABLABLABLABLABLA",
-    "ServerCertificateName": "yourdomain-com-certificate",
-    "Expiration": "2017-01-18T23:59:59Z",
-    "Path": "/",
-    "Arn": "arn:aws:iam::123123123123:server-certificate/yourdomain-com-certificate",
-    "UploadDate": "2016-01-20T10:49:07.300Z"
-  }
-}
+You can edit variables stored in the vault:
+
+```
+ansible-vault edit vault/<env-name-prefix>.yml
 ```
 
-`Arn` attribute is used as `ssl_certificate_id` for HTTPS listener in the ELB.
+Required contents for `vault/<env-name-prefix>.yml` (if you don't know the password):
+
+```yml
+aws_region: "eu-west-1"
+is_development: true
+dns_zone_name: "yourdomain.com"
+api:
+  database_type: "postgres"
+  database_host: "database1.local"
+  database_port: 5432
+  database_user: "example_api"
+  database_password: "test_password"
+  database_name: "example_api"
+  database_max_idle_conns: 5
+  database_max_open_conns: 5
+  scheme: "https"
+  host: "localhost:8080"
+  dns_prefix: "<environment>-api."
+app:
+  scheme: "https"
+  host: "localhost:8000"
+ssl_certificate_body: |
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+ssl_certificate_chain: |
+-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----
+ssl_certificate_private_key: |
+-----BEGIN RSA PRIVATE KEY-----
+...
+-----END RSA PRIVATE KEY-----
+```
+
+## AWS Provisioning
+
+### Environment Variables
+
+The terraform provider for AWS will read the standard AWS credentials environment variables. You must have these variables exported:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_DEFAULT_REGION` (eu-west-1)
+
+You can get the credentials from the AWS console.
+
+### SSH Agent
+
+Terraform will look for a deployment key in `~/.ssh` directory when creating a NAT instance. Add the deployment key to the ssh-agent, e.g.:
+
+```
+ssh-add ~/.ssh/stage-deployer
+```
 
 # Provisioning
 
@@ -275,18 +261,24 @@ export TF_VAR_env=prod
 Export DNS variables:
 
 ```
-export TF_VAR_dns_zone_id=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
 export TF_VAR_dns_zone_name=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
-export TF_VAR_ssl_certificate_id=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_id)
-export TF_VAR_api_dns_prefix=$(./scripts/get-vault-variable.sh $TF_VAR_env api_dns_prefix)
+export TF_VAR_api_dns_prefix=$(./scripts/get-vault-variable.sh $TF_VAR_env api.dns_prefix)
+```
+
+Export SSL certificate:
+
+```
+export TF_VAR_ssl_certificate_body=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_body)
+export TF_VAR_ssl_certificate_chain=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_chain)
+export TF_VAR_ssl_certificate_private_key=$(./scripts/get-vault-variable.sh $TF_VAR_env ssl_certificate_private_key)
 ```
 
 Export DB variables from the `ansible-vault`:
 
 ```
-export TF_VAR_db_name=$(./scripts/get-vault-variable.sh $TF_VAR_env database_name)
-export TF_VAR_db_user=$(./scripts/get-vault-variable.sh $TF_VAR_env database_user)
-export TF_VAR_db_password=$(./scripts/get-vault-variable.sh $TF_VAR_env database_password)
+export TF_VAR_db_name=$(./scripts/get-vault-variable.sh $TF_VAR_env api.database_name)
+export TF_VAR_db_user=$(./scripts/get-vault-variable.sh $TF_VAR_env api.database_user)
+export TF_VAR_db_password=$(./scripts/get-vault-variable.sh $TF_VAR_env api.database_password)
 ```
 
 Load JSON configuration for API service:

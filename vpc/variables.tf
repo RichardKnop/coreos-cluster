@@ -18,11 +18,6 @@ variable "nat_ami" {
   description = "AMI for NAT server"
 }
 
-variable "dns_zone_id" {
-  type        = "string"
-  description = "Amazon Route53 DNS zone identifier"
-}
-
 variable "dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
@@ -70,4 +65,19 @@ variable "private_cidrs" {
     zone1 = "10.0.11.0/24"
     zone2 = "10.0.21.0/24"
   }
+}
+
+variable "ssl_certificate_body" {
+  type        = "string"
+  description = "The contents of the public key certificate in PEM-encoded format."
+}
+
+variable "ssl_certificate_chain" {
+  type        = "string"
+  description = "The contents of the certificate chain. This is typically a concatenation of the PEM-encoded public key certificates of the chain."
+}
+
+variable "ssl_certificate_private_key" {
+  type        = "string"
+  description = "The contents of the private key in PEM-encoded format."
 }

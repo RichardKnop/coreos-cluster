@@ -38,6 +38,11 @@ variable "private_subnet_cidrs" {
   description = "Private subnet CIDR blocks"
 }
 
+variable "private_ip_from" {
+  type        = "string"
+  description = "Private IP addresses will start from 10.X.X.private_ip_from"
+}
+
 variable "coreos_ami" {
   type        = "string"
   description = "CoreOS AMI for ETCD instances"

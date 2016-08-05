@@ -11,7 +11,7 @@ function main() {
 }
 
 function check-prereqs() {
-  if ! (gpg --version 2>&1 | grep -q "gpg (GnuPG)"); then
+  if ! (gpg --version | grep -q "gpg (GnuPG)"); then
     echo "!!! GnuPG is required. Use 'brew install gnupg'."
     exit 1
   fi

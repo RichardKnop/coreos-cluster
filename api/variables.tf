@@ -58,9 +58,9 @@ variable "web_security_group_id" {
   description = "Web security group ID"
 }
 
-variable "ssl_certificate_id" {
+variable "ssl_certificate_arn" {
   type        = "string"
-  description = "The id of an SSL certificate uploaded to AWS IAM"
+  description = "The ARN of an AMI SSL certificate"
 }
 
 variable "dns_zone_id" {

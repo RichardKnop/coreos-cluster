@@ -30,8 +30,12 @@ function usage() {
 }
 
 function check-prereqs() {
-  if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
+  if ! (ansible-vault view -h | grep -q ansible-vault); then
     echo "!!! ansible-vault is required. Use 'pip install -r requirements.txt'."
+    exit 1
+  fi
+  if ! (shyaml -h | grep -q shyaml); then
+    echo "!!! shyaml is required. Use 'pip install -r requirements.txt'."
     exit 1
   fi
 }
@@ -39,12 +43,8 @@ function check-prereqs() {
 function get-vault-variable() {
   local -r key="${1}"
 
-  password=$(echo "${VAULT_DATA}" | awk -v FS="${key}: " 'NF>1{print $2}')
-
-  # Trim double quotes
-  temp="${password%\"}"
-  temp="${temp#\"}"
-  echo "$temp"
+  decrypted="$(echo "${VAULT_DATA}" | shyaml get-value ${key})"
+  echo $decrypted
 }
 
 main "$@"

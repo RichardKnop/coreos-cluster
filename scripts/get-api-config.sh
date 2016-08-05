@@ -18,19 +18,19 @@ function main() {
   check-prereqs
 
   # Database config
-  local -r database_host=`get-vault-variable api_database_host`
-  local -r database_port=`get-vault-variable api_database_port`
-  local -r database_user=`get-vault-variable api_database_user`
-  local -r database_password=`get-vault-variable api_database_password`
-  local -r database_name=`get-vault-variable api_database_name`
-  local -r database_max_idle_conns=`get-vault-variable api_database_max_idle_conns`
-  local -r database_max_open_conns=`get-vault-variable api_database_max_open_conns`
+  local -r database_host=`get-vault-variable api.database_host`
+  local -r database_port=`get-vault-variable api.database_port`
+  local -r database_user=`get-vault-variable api.database_user`
+  local -r database_password=`get-vault-variable api.database_password`
+  local -r database_name=`get-vault-variable api.database_name`
+  local -r database_max_idle_conns=`get-vault-variable api.database_max_idle_conns`
+  local -r database_max_open_conns=`get-vault-variable api.database_max_open_conns`
 
   # Web config
-  local -r api_scheme=`get-vault-variable api_scheme`
-  local -r api_host=`get-vault-variable api_host`
-  local -r app_scheme=`get-vault-variable app_scheme`
-  local -r app_host=`get-vault-variable app_host`
+  local -r api_scheme=`get-vault-variable api.scheme`
+  local -r api_host=`get-vault-variable api.host`
+  local -r app_scheme=`get-vault-variable app.scheme`
+  local -r app_host=`get-vault-variable app.host`
 
   # Is development environment?
   local -r is_development=`get-vault-variable is_development`
@@ -80,7 +80,7 @@ function usage() {
 }
 
 function check-prereqs() {
-  if ! (ansible-vault view --version 2>&1 | grep -q ansible-vault); then
+  if ! (ansible-vault view -h | grep -q ansible-vault); then
     echo "!!! ansible-vault is required. Use 'pip install -r requirements.txt'."
     exit 1
   fi
@@ -89,12 +89,8 @@ function check-prereqs() {
 function get-vault-variable() {
   local -r key="${1}"
 
-  password=$(echo "${VAULT_DATA}" | awk -v FS="$key: " 'NF>1{print $2}')
-
-  # Trim double quotes
-  temp="${password%\"}"
-  temp="${temp#\"}"
-  echo "$temp"
+  decrypted="$(echo "${VAULT_DATA}" | shyaml get-value ${key})"
+  echo $decrypted
 }
 
 main "$@"

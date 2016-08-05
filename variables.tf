@@ -27,11 +27,6 @@ variable "coreos_amis" {
   }
 }
 
-variable "dns_zone_id" {
-  type        = "string"
-  description = "Amazon Route53 DNS zone identifier"
-}
-
 variable "dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
@@ -41,11 +36,6 @@ variable "private_dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name for internal usage"
   default     = "local"
-}
-
-variable "ssl_certificate_id" {
-  type        = "string"
-  description = "The id of an SSL certificate uploaded to AWS IAM"
 }
 
 variable "nat_instance_type" {
@@ -149,4 +139,19 @@ variable "api_config" {
 variable "api_dns_prefix" {
   type        = "string"
   description = "DNS prefix (e.g. stage-api. or api.)"
+}
+
+variable "ssl_certificate_body" {
+  type        = "string"
+  description = "The contents of the public key certificate in PEM-encoded format."
+}
+
+variable "ssl_certificate_chain" {
+  type        = "string"
+  description = "The contents of the certificate chain. This is typically a concatenation of the PEM-encoded public key certificates of the chain."
+}
+
+variable "ssl_certificate_private_key" {
+  type        = "string"
+  description = "The contents of the private key in PEM-encoded format."
 }

@@ -22,7 +22,7 @@ resource "aws_instance" "node" {
   ami = "${var.coreos_ami}"
   instance_type = "${var.cluster_instance_type}"
   subnet_id = "${element(var.private_subnet_ids, count.index % length(var.private_subnet_ids))}"
-  private_ip = "${cidrhost(element(var.private_subnet_cidrs, count.index % length(var.private_subnet_cidrs)), 10 + (count.index / length(var.private_subnet_cidrs)))}"
+  private_ip = "${cidrhost(element(var.private_subnet_cidrs, count.index % length(var.private_subnet_cidrs)), var.private_ip_from + (count.index / length(var.private_subnet_cidrs)))}"
   iam_instance_profile = "${aws_iam_instance_profile.node.name}"
 
   root_block_device = {

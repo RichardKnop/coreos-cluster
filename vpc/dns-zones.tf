@@ -1,3 +1,10 @@
+resource "aws_route53_zone" "public" {
+  name = "${var.dns_zone_name}"
+  tags {
+    Environment = "${var.env}-public-dns-zone"
+  }
+}
+
 resource "aws_route53_zone" "private" {
   name = "${var.private_dns_zone_name}"
   vpc_id = "${aws_vpc.default.id}"
