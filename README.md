@@ -176,6 +176,7 @@ Required contents for `vault/<env-name-prefix>.yml` (if you don't know the passw
 ```yml
 aws_region: "eu-west-1"
 is_development: true
+dns_zone_id: "Z1234"
 dns_zone_name: "yourdomain.com"
 api:
   database_type: "postgres"
@@ -261,6 +262,7 @@ export TF_VAR_env=prod
 Export DNS variables:
 
 ```
+export TF_VAR_dns_zone_id=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
 export TF_VAR_dns_zone_name=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
 export TF_VAR_api_dns_prefix=$(./scripts/get-vault-variable.sh $TF_VAR_env api.dns_prefix)
 ```

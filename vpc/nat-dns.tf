@@ -1,5 +1,5 @@
 resource "aws_route53_record" "nat" {
-  zone_id = "${aws_route53_zone.public.id}"
+  zone_id = "${var.dns_zone_id}"
   name = "${var.env}-nat.${var.dns_zone_name}"
   type = "A"
   ttl = "60"

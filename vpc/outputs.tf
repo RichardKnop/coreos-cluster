@@ -2,10 +2,6 @@ output "vpc_id" {
   value = "${aws_vpc.default.id}"
 }
 
-output "dns_zone_id" {
-  value = "${aws_route53_zone.public.id}"
-}
-
 output "ssl_certificate_arn" {
   value = "${aws_iam_server_certificate.ssl_certificate.arn}"
 }

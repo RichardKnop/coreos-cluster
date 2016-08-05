@@ -18,6 +18,11 @@ variable "nat_ami" {
   description = "AMI for NAT server"
 }
 
+variable "dns_zone_id" {
+  type        = "string"
+  description = "Amazon Route53 DNS zone ID"
+}
+
 variable "dns_zone_name" {
   type        = "string"
   description = "Amazon Route53 DNS zone name"
