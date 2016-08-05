@@ -2,7 +2,7 @@ resource "aws_route53_record" "node_alias" {
   count = "${var.cluster_size}"
   zone_id = "${var.private_dns_zone_id}"
   name = "coreos${count.index}.${var.cluster_id}.${var.private_dns_zone_name}"
-  type = "A"
+  type = "CNAME"
   ttl = "60"
   records = ["${element(aws_instance.node.*.private_ip, count.index)}"]
 }
