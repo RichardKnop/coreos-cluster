@@ -14,7 +14,7 @@ resource "aws_instance" "nat" {
     "${aws_security_group.nat_route.id}"
   ]
 
-  key_name = "${var.env}-deployer"
+  key_name = "${aws_key_pair.deployer.key_name}"
   connection {
     user = "ec2-user"
     key_file = "~/.ssh/${var.env}-deployer"

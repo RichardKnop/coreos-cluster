@@ -2,6 +2,10 @@ output "vpc_id" {
   value = "${aws_vpc.default.id}"
 }
 
+output "deployer_key_name" {
+  value = "${aws_key_pair.deployer.key_name}"
+}
+
 output "ssl_certificate_arn" {
   value = "${aws_iam_server_certificate.ssl_certificate.arn}"
 }

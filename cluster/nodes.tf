@@ -36,7 +36,7 @@ resource "aws_instance" "node" {
     "${aws_security_group.etcd.id}",
   ]
 
-  key_name = "${var.env}-deployer"
+  key_name = "${var.deployer_key_name}"
 
   tags = {
     OS = "coreos"

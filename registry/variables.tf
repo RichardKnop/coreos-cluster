@@ -13,6 +13,11 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
+variable "deployer_key_name" {
+  type        = "string"
+  description = "Deployer key pair name"
+}
+
 variable "registry_instance_type" {
   type        = "string"
   description = "EC2 instance type to use for registry nodes"

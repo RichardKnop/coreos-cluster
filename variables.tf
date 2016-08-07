@@ -9,6 +9,11 @@ variable "region" {
   default     = "eu-west-1"
 }
 
+variable "public_key" {
+  type        = "string"
+  description = "Public key"
+}
+
 variable "nat_amis" {
   type        = "map"
   description = "AMIs for NAT server by region"

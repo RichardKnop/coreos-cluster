@@ -7,6 +7,7 @@ module "vpc" {
 
   env = "${var.env}"
   region = "${var.region}"
+  public_key = "${var.public_key}"
   nat_instance_type = "${lookup(var.nat_instance_type, var.env)}"
   nat_ami = "${lookup(var.nat_amis, var.region)}"
   dns_zone_id = "${var.dns_zone_id}"
@@ -32,6 +33,7 @@ module "cluster" {
   env = "${var.env}"
   region = "${var.region}"
   vpc_id = "${module.vpc.vpc_id}"
+  deployer_key_name = "${module.vpc.deployer_key_name}"
   cluster_id = "cluster1"
   cluster_size = "${lookup(var.cluster_size, var.env)}"
   cluster_instance_type = "${lookup(var.cluster_instance_type, var.env)}"
@@ -57,6 +59,7 @@ module "registry" {
   env = "${var.env}"
   region = "${var.region}"
   vpc_id = "${module.vpc.vpc_id}"
+  deployer_key_name = "${module.vpc.deployer_key_name}"
   registry_instance_type = "${lookup(var.registry_instance_type, var.env)}"
   private_subnet_ids = "${split(",", module.vpc.private_subnet_ids)}"
   coreos_ami = "${lookup(var.coreos_amis, var.region)}"

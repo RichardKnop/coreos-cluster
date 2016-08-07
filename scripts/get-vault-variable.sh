@@ -43,8 +43,8 @@ function check-prereqs() {
 function get-vault-variable() {
   local -r key="${1}"
 
-  decrypted="$(echo "${VAULT_DATA}" | shyaml get-value ${key})"
-  echo $decrypted
+  decrypted="$(printf "${VAULT_DATA}" | shyaml get-value ${key})"
+  printf '%s' "$decrypted"
 }
 
 main "$@"

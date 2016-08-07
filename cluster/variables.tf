@@ -13,6 +13,11 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
+variable "deployer_key_name" {
+  type        = "string"
+  description = "Deployer key pair name"
+}
+
 variable "cluster_id" {
   type        = "string"
   description = "Unique name for the cluster"

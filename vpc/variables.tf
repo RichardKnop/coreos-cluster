@@ -8,6 +8,11 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "public_key" {
+  type        = "string"
+  description = "Public key"
+}
+
 variable "nat_instance_type" {
   type        = "string"
   description = "EC2 instance type to use for NAT server"

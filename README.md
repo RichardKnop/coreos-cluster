@@ -193,6 +193,7 @@ api:
 app:
   scheme: "https"
   host: "localhost:8000"
+public_key: ssh-rsa ...
 ssl_certificate_body: |
 -----BEGIN CERTIFICATE-----
 ...
@@ -265,6 +266,12 @@ Export DNS variables:
 export TF_VAR_dns_zone_id=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_id)
 export TF_VAR_dns_zone_name=$(./scripts/get-vault-variable.sh $TF_VAR_env dns_zone_name)
 export TF_VAR_api_dns_prefix=$(./scripts/get-vault-variable.sh $TF_VAR_env api.dns_prefix)
+```
+
+Export public key:
+
+```
+export TF_VAR_public_key=$(./scripts/get-vault-variable.sh $TF_VAR_env public_key)
 ```
 
 Export SSL certificate:
