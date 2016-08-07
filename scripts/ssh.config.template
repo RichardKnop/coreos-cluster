@@ -1,0 +1,19 @@
+Host DEPLOY_ENV-nat.DOMAIN
+    User                   ec2-user
+    HostName               DEPLOY_ENV-nat.DOMAIN
+    ProxyCommand           none
+    StrictHostKeyChecking  no
+    BatchMode              yes
+    PasswordAuthentication no
+    ControlMaster          auto
+    ControlPath            ~/.ssh/mux-%r@%h:%p
+    ControlPersist         8h
+
+Host 10.0.*.*
+    ServerAliveInterval    60
+    TCPKeepAlive           yes
+    ProxyCommand           ssh -F ssh.config -q -A ec2-user@DEPLOY_ENV-nat.DOMAIN nc %h %p
+    ControlMaster          auto
+    ControlPath            ~/.ssh/mux-%r@%h:%p
+    ControlPersist         8h
+    User                   core

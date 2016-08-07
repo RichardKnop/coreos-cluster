@@ -1,0 +1,22 @@
+[Unit]
+Description=Nginx proxy service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=10s
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull jwilder/nginx-proxy:latest
+ExecStartPre=-/usr/bin/docker kill nginx-proxy
+ExecStartPre=-/usr/bin/docker rm nginx-proxy
+ExecStart=/usr/bin/docker run \
+	--name nginx-proxy \
+	-v /var/run/docker.sock:/tmp/docker.sock:ro \
+	-p 80:80 \
+	--log-driver=journald \
+	jwilder/nginx-proxy:latest
+ExecStop=/usr/bin/docker stop nginx-proxy
+
+[X-Fleet]
+Global=true

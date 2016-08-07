@@ -1,0 +1,65 @@
+#cloud-config
+
+hostname: "${hostname}"
+
+write_files:
+  - path: /etc/hosts
+    content: |
+      127.0.0.1   localhost
+      127.0.0.1   ${host}
+  # let's add our own CA to trusted certificates
+  - path: /etc/ssl/certs/ca.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${ca_cert}
+  # add registry certificate
+  - path: /home/core/certs/registry-key.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${registry_key}
+  - path: /home/core/certs/registry.pem
+    permissions: 0644
+    encoding: base64
+    content: |
+      ${registry_cert}
+
+coreos:
+  units:
+    - name: update-ca-certificates.service
+      command: start
+      content: |
+        [Unit]
+        Description=Updateds CA certificates
+        Before=docker.service
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/sbin/update-ca-certificates
+        [Install]
+        WantedBy=multi-user.target
+    - name: registry.service
+      command: start
+      content: |
+        [Unit]
+        Description=Docker private registry service
+        After=docker.service
+
+        [Service]
+        ExecStartPre=-/usr/bin/docker kill %n
+        ExecStartPre=-/usr/bin/docker rm %n
+        ExecStartPre=/usr/bin/docker pull registry:2
+        ExecStart=/usr/bin/docker run --name %n -p ${port}:5000 \
+          -v /home/core/certs:/certs \
+          -e REGISTRY_STORAGE=s3 \
+          -e REGISTRY_STORAGE_S3_REGION=${region} \
+          -e REGISTRY_STORAGE_S3_BUCKET=${storage_bucket} \
+          -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry.pem \
+          -e REGISTRY_HTTP_TLS_KEY=/certs/registry-key.pem \
+          registry:2
+        ExecStop=/usr/bin/docker stop %n
+        Restart=always
+        RestartSec=10s
+
+        [Install]
+        WantedBy=multi-user.target

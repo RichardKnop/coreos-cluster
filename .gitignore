@@ -1,0 +1,8 @@
+.DS_Store
+ssh.config
+.terraform
+*.tfstate
+*.backup
+.venv
+crash.log
+.bash_profile
