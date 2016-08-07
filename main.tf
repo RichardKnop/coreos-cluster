@@ -88,8 +88,28 @@ module "rds" {
   private_dns_zone_name = "${var.private_dns_zone_name}"
 }
 
-module "api" {
-  source = "./api"
+module "nginx-proxy" {
+  source = "./nginx-proxy"
+
+  env = "${var.env}"
+  cluster_size = "${lookup(var.cluster_size, var.env)}"
+  bastion_host = "${module.vpc.nat_public_ip}"
+  bastion_user = "ec2-user"
+  node_ids = "${split(",", module.cluster.node_ids)}"
+  node_private_ips = "${split(",", module.cluster.node_private_ips)}"
+  node_user = "core"
+  public_subnet_ids = "${split(",", module.vpc.public_subnet_ids)}"
+  web_security_group_id = "${module.vpc.web_security_group_id}"
+  ssl_certificate_arn = "${module.vpc.ssl_certificate_arn}"
+  dns_zone_id = "${var.dns_zone_id}"
+  dns_zone_name = "${var.dns_zone_name}"
+  dns_prefix = "${var.api_dns_prefix}"
+  private_dns_zone_name = "${var.private_dns_zone_name}"
+}
+
+
+module "example-api" {
+  source = "./example-api"
 
   env = "${var.env}"
   cluster_size = "${lookup(var.cluster_size, var.env)}"
@@ -101,13 +121,8 @@ module "api" {
   registry_id = "${module.registry.registry_id}"
   registry_private_ip = "${module.registry.registry_private_ip}"
   registry_user = "core"
-  public_subnet_ids = "${split(",", module.vpc.public_subnet_ids)}"
-  web_security_group_id = "${module.vpc.web_security_group_id}"
-  ssl_certificate_arn = "${module.vpc.ssl_certificate_arn}"
-  dns_zone_id = "${var.dns_zone_id}"
-  dns_zone_name = "${var.dns_zone_name}"
-  dns_prefix = "${var.api_dns_prefix}"
   private_dns_zone_name = "${var.private_dns_zone_name}"
+  virtual_host = "${dns_prefix}${dns_zone_name}"
   git_repo = "https://github.com/RichardKnop/example-api.git"
   git_dest = "example-api"
   version = "v0.0.0"

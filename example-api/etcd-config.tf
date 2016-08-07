@@ -14,8 +14,8 @@ resource "null_resource" "etcd_config" {
   }
 
   provisioner "remote-exec" {
-    # Write configuration to etcd
     inline = [
+      # Write configuration to etcd
       "source /etc/profile.d/etcd-envvars.sh",
       "etcdctl set ${var.etcd_path} '${var.etcd_config}'",
     ]

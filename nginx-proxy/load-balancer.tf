@@ -1,5 +1,5 @@
-resource "aws_elb" "api" {
-  name = "${var.env}-api-elb"
+resource "aws_elb" "nginx_proxy" {
+  name = "${var.env}-nginx-proxy-elb"
   subnets = ["${var.public_subnet_ids}"]
   security_groups = [
     "${var.web_security_group_id}",
@@ -25,6 +25,6 @@ resource "aws_elb" "api" {
   cross_zone_load_balancing = true
 
   tags {
-    Name = "${var.env}-api-elb"
+    Name = "${var.env}-nginx-proxy-elb"
   }
 }

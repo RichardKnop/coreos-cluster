@@ -17,7 +17,7 @@ ExecStart=/usr/bin/docker run \
 	-e ETCD_CERT_FILE=/mnt/client.pem \
 	-e ETCD_KEY_FILE=/mnt/client-key.pem \
 	-e ETCD_CA_FILE=/mnt/ca.pem \
-	-e VIRTUAL_HOST=${dns_prefix}${dns_zone_name} \
+	-e VIRTUAL_HOST=${virtual_host} \
 	--log-driver=journald \
 	registry.local/example-api:latest \
 	example-api runserver

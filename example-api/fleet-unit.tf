@@ -1,22 +1,13 @@
-resource "template_file" "nginx_proxy_unit" {
-  template = "${file("${path.module}/templates/nginx-proxy.service")}"
-
-  vars {
-    private_dns_zone_name = "${var.private_dns_zone_name}"
-  }
-}
-
 resource "template_file" "api_unit" {
   template = "${file("${path.module}/templates/example-api.service")}"
 
   vars {
     private_dns_zone_name = "${var.private_dns_zone_name}"
-    dns_zone_name = "${var.dns_zone_name}"
-    dns_prefix = "${var.dns_prefix}"
+    virtual_host = "${var.virtual_host}"
   }
 }
 
-resource "null_resource" "copy_units" {
+resource "null_resource" "copy_unit" {
   count = "${var.cluster_size}"
 
   # Changes to any instance of the cluster requires re-provisioning
@@ -33,12 +24,9 @@ resource "null_resource" "copy_units" {
   }
 
   provisioner "remote-exec" {
-    # Write configuration to etcd
     inline = [
-      "cat <<EOF > /home/core/nginx-proxy.service",
-      "${template_file.nginx_proxy_unit.rendered}",
-      "EOF",
-      "cat <<EOF > /home/core/example-api.service",
+      # Copy systemd unit file
+      "cat <<EOF > /home/core/api.service",
       "${template_file.api_unit.rendered}",
       "EOF",
     ]
