@@ -38,7 +38,7 @@ A private Docker registry is also created at `registry.local` and Docker nodes a
 
 # Requirements
 
-You need Terraform >= 0.6.9, e.g.:
+You need Terraform >= 0.7.0, e.g.:
 
 ```
 brew install terraform
